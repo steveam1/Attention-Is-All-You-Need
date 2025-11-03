@@ -6,7 +6,7 @@ Authors: Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones
 
 ---
 
-## 📘 Overview
+## Overview
 
 Before Transformers, models like RNNs and CNNs dominated language processing but struggled to handle long-range dependencies and were hard to train efficiently.
 
@@ -21,7 +21,7 @@ Instead of processing one word at a time, the Transformer looks at all words in 
 
 ---
 
-## ⚙️ Model Architecture
+## Model Architecture
 
 The Transformer follows an **encoder–decoder** structure with six layers each. Unlike RNNs, which work step by step, the Transformer uses attention to look at every word at once.
 
@@ -64,7 +64,7 @@ This structure allows the model to capture relationships between all words simul
 
 ---
 
-## 💬 Discussion Questions
+## Discussion Questions
 
 1. **Why did the authors remove recurrence and convolution, and what benefits did that bring?**
    
@@ -72,7 +72,7 @@ This structure allows the model to capture relationships between all words simul
 
 ---
 
-## 🔍 Critical Analysis
+## Critical Analysis
 
 While the Transformer was revolutionary, it had a few limitations:
 
@@ -86,7 +86,7 @@ Even with these limits, this paper completely redefined the standard for sequenc
 
 ---
 
-## 🌍 Impact
+## Impact
 
 The Transformer architecture became the foundation for nearly all modern AI models. It made it possible to train much larger models that can generalize across tasks.
 
@@ -100,7 +100,7 @@ The phrase *"Attention is all you need"* basically became the motto for today's 
 
 ---
 
-## 💻 Code Demo
+## Code Demo
 
 Here's a quick example showing how a small Transformer model works today using the Hugging Face `transformers` library:
 
@@ -124,7 +124,7 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 ---
 
-## 📚 Citation
+## Citation
 
 ```bibtex
 @article{vaswani2017attention,
@@ -140,7 +140,7 @@ Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Ka
 
 ---
 
-## 🔗 Resource Links
+## Resource Links
 
 1. [Original Paper (arXiv)](https://arxiv.org/abs/1706.03762)
 2. [Tensor2Tensor Code (GitHub)](https://github.com/tensorflow/tensor2tensor)
@@ -150,7 +150,7 @@ Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Ka
 
 ---
 
-## 📊 Presentation Information
+## Presentation Information
 
 **Presenter:** [Your Name]  
 **Course:** DS 5690 – Topics in Data Science  
