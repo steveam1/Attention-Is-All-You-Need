@@ -10,11 +10,11 @@
 
 ### The Problem
 
-Before 2017, NLP models relied on RNNs or CNNs, both with serious limitations. RNNs processed sequences one token at a time, making them painfully slow to train and prone to forgetting long-range dependencies (vanishing gradients). CNNs were faster but couldn't effectively capture relationships between distant words. The core issue? Neither architecture could parallelize well, which bottlenecked training on large datasets.
+Before 2017, NLP models relied on RNNs or CNNs both with serious limitations. RNNs processed sequences one token at a time, making them painfully slow to train and prone to forgetting long-range dependencies (vanishing gradients). CNNs were faster but couldn't effectively capture relationships between distant words. The core issue? Neither architecture could parallelize well which bottlenecked training on large datasets.
 
 ### The Approach
 
-Vaswani et al. proposed something radical: ditch recurrence and convolution entirely. The **Transformer** uses pure attention mechanisms to process all tokens simultaneously. Self-attention computes relationships between every pair of words in a sentence, regardless of distance. Multiple attention heads run in parallel, each learning different linguistic patterns. Stack this 6 layers deep in both encoder and decoder, add positional encodings (since attention doesn't inherently understand order), and you've got a model that's both more powerful and more parallelizable.
+Vaswani proposed something radical which was to ditch recurrence and convolution entirely. The **Transformer** uses pure attention mechanisms to process all tokens simultaneously. Self-attention computes relationships between every pair of words in a sentence regardless of distance. Multiple attention heads run in parallel, each learning different linguistic patterns. Stack this 6 layers deep in both encoder and decoder, add positional encodings (since attention doesn't inherently understand order), and you've got a model that's both more powerful and more parallelizable.
 
 ### Results
 
@@ -26,7 +26,7 @@ The speed improvement was the real game-changer. Faster training → bigger mode
 
 ---
 
-## ⚙️ Model Architecture
+## Model Architecture
 
 ### Core Components
 
@@ -167,7 +167,7 @@ Key innovation: Everything happens in parallel. No sequential dependencies means
 
 ---
 
-## 💬 Discussion Questions
+## Discussion Questions
 
 ### Question 1: Why Remove Recurrence and Convolution?
 
@@ -225,9 +225,9 @@ Additive sinusoidal encoding is elegant but not optimal. Learned embeddings can 
 
 ---
 
-## 🌍 Impact
+## Impact
 
-This paper fundamentally changed AI. Not exaggerating—it's the foundation of modern deep learning.
+This paper fundamentally changed AI and is the foundation of modern deep learning.
 
 ### Paradigm Shifts
 
@@ -288,7 +288,7 @@ This paper didn't just improve BLEU scores—it redefined what's possible with A
 
 ---
 
-## 💻 Code Demo
+## Code Demo
 
 ### Translation with T5
 ```python
