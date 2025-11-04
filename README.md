@@ -6,7 +6,7 @@
 
 ---
 
-## 📘 Overview
+## Overview
 
 ### The Problem
 
@@ -189,7 +189,7 @@ Key innovation: Everything happens in parallel. No sequential dependencies means
 
 ---
 
-## 🔍 Critical Analysis
+## Critical Analysis
 
 ### Major Limitations
 
@@ -421,7 +421,7 @@ print(f"Input: {x.shape}, Output: {output.shape}")
 
 ---
 
-## 📚 Citation
+## Citation
 ```bibtex
 @article{vaswani2017attention,
   title={Attention is all you need},
@@ -436,7 +436,7 @@ Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Ka
 
 ---
 
-## 🔗 Resource Links
+## Resource Links
 
 1. **[Original Paper (arXiv)](https://arxiv.org/abs/1706.03762)** - The paper that started it all
 2. **[Tensor2Tensor GitHub](https://github.com/tensorflow/tensor2tensor)** - Original TensorFlow implementation
