@@ -1,542 +1,310 @@
-# Attention Is All You Need
+Attention Is All You Need
+DS 5690 – Paper Project (Fall 2025)
+Authors: Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin (Google Brain & Google Research, 2017)
 
-**DS 5690 – Paper Project (Fall 2025)**
+📘 Overview
+The Problem
+Before 2017, NLP models relied on RNNs or CNNs, both with serious limitations. RNNs processed sequences one token at a time, making them painfully slow to train and prone to forgetting long-range dependencies (vanishing gradients). CNNs were faster but couldn't effectively capture relationships between distant words. The core issue? Neither architecture could parallelize well, which bottlenecked training on large datasets.
+The Approach
+Vaswani et al. proposed something radical: ditch recurrence and convolution entirely. The Transformer uses pure attention mechanisms to process all tokens simultaneously. Self-attention computes relationships between every pair of words in a sentence, regardless of distance. Multiple attention heads run in parallel, each learning different linguistic patterns. Stack this 6 layers deep in both encoder and decoder, add positional encodings (since attention doesn't inherently understand order), and you've got a model that's both more powerful and more parallelizable.
+Results
+28.4 BLEU on WMT 2014 English-German (beating previous SOTA by 2+ BLEU)
+41.8 BLEU on WMT 2014 English-French (new single-model record)
+12 hours to train the base model on 8 GPUs (vs. days or weeks for previous models)
+The speed improvement was the real game-changer. Faster training → bigger models → better performance → the foundation for GPT, BERT, and everything after.
 
-**Authors:** Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin (Google Brain & Google Research, 2017)
-
----
-
-## 📘 Overview
-
-### The Problem
-
-Before 2017, if you wanted to build a model that could translate languages or understand text, you were basically stuck with two main options: Recurrent Neural Networks (RNNs) or Convolutional Neural Networks (CNNs). Both had some pretty serious issues. RNNs processed words one at a time in sequence, which meant they were super slow and had a hard time remembering information from earlier in a sentence (the infamous vanishing gradient problem). CNNs were faster but struggled to capture long-range dependencies between words that were far apart.
-
-The real bottleneck was that these models couldn't be easily parallelized during training. RNNs had to wait for each time step to finish before moving to the next one, which made training painfully slow on long sequences. This sequential processing was a fundamental constraint that limited both the size of models we could train and how much data we could feed them.
-
-### The Approach
-
-Vaswani and his team at Google asked a bold question: what if we got rid of recurrence and convolution entirely? Instead, they proposed the **Transformer**, a model architecture built purely on **attention mechanisms**. The key insight was that attention allows the model to look at all words in a sentence simultaneously and figure out which words are relevant to each other, regardless of their distance in the sequence.
-
-Think of it like this: when you read a sentence, you don't just process word by word. Your brain can jump around and connect "it" to "the cat" even if they're separated by several other words. That's basically what attention does.
-
-### How It Works
-
-The Transformer uses something called **self-attention** to compute representations of input sequences. For each word, it calculates how much attention to pay to every other word in the sentence. Then it uses these attention weights to create a weighted combination of all the word representations. By doing this multiple times in parallel (multi-head attention) and stacking several layers, the model builds up increasingly sophisticated representations.
-
-Because there's no recurrence, the entire input can be processed in parallel, making training way faster. The authors added positional encodings to give the model information about word order, since attention itself doesn't care about sequence position.
-
-### Results
-
-The results were honestly kind of crazy. On the WMT 2014 English-to-German translation benchmark, the Transformer achieved **28.4 BLEU**, beating all previous models including ensembles by more than 2 BLEU points. On English-to-French, it hit **41.8 BLEU**, setting a new state-of-the-art.
-
-But what really made people pay attention (pun intended) was the training time. The big model trained in just **3.5 days on 8 GPUs**. Previous state-of-the-art models took way longer. The base model trained in only **12 hours**, which was absolutely unheard of at the time for a model of this quality.
-
----
-
-## ⚙️ Model Architecture
-
-The Transformer uses an encoder-decoder architecture, but unlike previous sequence-to-sequence models, both the encoder and decoder are built entirely from attention layers and feed-forward networks. No recurrence, no convolution.
-
-### Core Components
-
-**1. Multi-Head Self-Attention**
-
-This is the heart of the Transformer. Instead of having a single attention mechanism, the model runs several attention operations in parallel (8 heads in the base model). Each head can learn to focus on different aspects of the relationships between words.
-
-The attention mechanism itself works by computing three vectors for each word: Query (Q), Key (K), and Value (V). The attention weight between two words is computed as the dot product of their Q and K vectors (scaled and normalized with softmax), and these weights are used to take a weighted sum of the V vectors.
-
-**2. Position-wise Feed-Forward Networks**
-
-After attention, each position goes through a two-layer fully connected network with a ReLU activation. This is applied identically at each position but with different parameters across layers. It gives the model more capacity to transform representations.
-
-**3. Positional Encoding**
-
-Since the model has no built-in notion of sequence order, positional encodings are added to the input embeddings. The authors use sine and cosine functions of different frequencies, which allows the model to learn to attend to relative positions.
-
-**4. Residual Connections and Layer Normalization**
-
-Each sub-layer (attention or feed-forward) is wrapped with a residual connection and layer normalization. This helps with training stability and allows gradients to flow more easily through the network.
-
-### Differences from Previous Models
-
-**vs. RNNs:** No sequential processing means full parallelization and O(1) path length between any two positions (RNNs have O(n) path length)
-
-**vs. CNNs:** Can capture long-range dependencies in constant layers (CNNs need O(log n) layers with dilated convolutions)
-
-**vs. Previous Attention Models:** First model to rely *entirely* on self-attention without recurrence
-
-### Detailed Pseudocode
-
-```python
-# Main Transformer Architecture
-def Transformer(input_seq, target_seq):
+⚙️ Model Architecture
+Core Components
+Multi-Head Self-Attention: Computes attention 8 times in parallel with different learned projections. Each head focuses on different aspects of word relationships (syntax, semantics, etc.). Complexity is O(n²) in sequence length but O(1) in sequential operations.
+Position-wise Feed-Forward: Two-layer MLP applied identically at each position. First layer expands from d_model=512 to d_ff=2048, applies ReLU, then projects back down.
+Positional Encoding: Sine/cosine functions of varying frequencies added to input embeddings. Allows the model to use word position information since attention is permutation-invariant.
+Residual + LayerNorm: Every sub-layer wrapped with LayerNorm(x + Sublayer(x)) for stable training and gradient flow.
+Why This Beats RNNs/CNNs
+ModelSequential OpsMax Path LengthParallelizationRNNO(n)O(n)None within sequenceCNNO(1)O(log_k(n))FullTransformerO(1)O(1)Full
+Transformers connect any two positions in constant time, enabling better long-range dependency learning.
+Detailed Pseudocode
+pythondef Transformer(src, tgt):
     """
-    Full transformer model for sequence-to-sequence tasks
-    
-    Args:
-        input_seq: Source sequence (e.g., English sentence)
-        target_seq: Target sequence (e.g., German sentence)
-    Returns:
-        Output probabilities over vocabulary for each target position
+    Full seq2seq transformer
+    Args: src (source tokens), tgt (target tokens)
+    Returns: output probabilities
     """
-    # Embed input tokens and add positional encoding
-    input_embedded = Embedding(input_seq)  # Shape: (seq_len, d_model)
-    input_pos_encoded = input_embedded + PositionalEncoding(seq_len)
+    # Embed and add positional encoding
+    src_embed = Embedding(src) + PositionalEncoding(len(src))
+    tgt_embed = Embedding(tgt) + PositionalEncoding(len(tgt))
     
-    # Encode input sequence
-    encoder_output = Encoder(input_pos_encoded, num_layers=6)
+    # Encode source
+    memory = Encoder(src_embed, num_layers=6)
     
-    # Embed target tokens and add positional encoding
-    target_embedded = Embedding(target_seq)
-    target_pos_encoded = target_embedded + PositionalEncoding(target_len)
+    # Decode to target
+    output = Decoder(tgt_embed, memory, num_layers=6)
     
-    # Decode with attention to encoder output
-    decoder_output = Decoder(target_pos_encoded, encoder_output, num_layers=6)
-    
-    # Project to vocabulary and get probabilities
-    logits = Linear(decoder_output, d_model -> vocab_size)
-    output_probs = Softmax(logits)
-    
-    return output_probs
+    # Project to vocab
+    return Softmax(Linear(output))
 
 
-# Encoder Stack
 def Encoder(x, num_layers=6):
     """
-    Stack of identical encoder layers with self-attention
-    
-    Args:
-        x: Input embeddings with positional encoding (seq_len, d_model)
-        num_layers: Number of encoder layers (default: 6)
-    Returns:
-        Encoded representations (seq_len, d_model)
+    Stacked encoder with self-attention
+    Args: x (seq_len, d_model=512)
+    Returns: encoded representation
     """
-    for layer in range(num_layers):
-        # Self-attention: each position attends to all positions in input
-        attn_output = MultiHeadAttention(
-            query=x, 
-            key=x, 
-            value=x,
-            num_heads=8,
-            d_k=64,  # dimension per head
-            d_v=64
-        )
-        # Add & Norm
-        x = LayerNorm(x + attn_output)
+    for _ in range(num_layers):
+        # Self-attention
+        attn = MultiHeadAttention(query=x, key=x, value=x, heads=8)
+        x = LayerNorm(x + Dropout(attn))
         
-        # Position-wise feed-forward network
-        ffn_output = FeedForward(x, d_ff=2048)
-        # Add & Norm
-        x = LayerNorm(x + ffn_output)
+        # Feed-forward
+        ff = FeedForward(x, d_ff=2048)
+        x = LayerNorm(x + Dropout(ff))
     
     return x
 
 
-# Decoder Stack
-def Decoder(y, encoder_output, num_layers=6):
+def Decoder(x, memory, num_layers=6):
     """
-    Stack of identical decoder layers with masked self-attention 
-    and encoder-decoder attention
-    
-    Args:
-        y: Target embeddings with positional encoding (target_len, d_model)
-        encoder_output: Output from encoder (seq_len, d_model)
-        num_layers: Number of decoder layers (default: 6)
-    Returns:
-        Decoded representations (target_len, d_model)
+    Stacked decoder with masked self-attention and cross-attention
+    Args: x (target embeddings), memory (encoder output)
+    Returns: decoded representation
     """
-    for layer in range(num_layers):
-        # Masked self-attention: each position attends only to earlier positions
-        # This prevents the decoder from "cheating" by looking at future tokens
-        masked_attn_output = MultiHeadAttention(
-            query=y,
-            key=y,
-            value=y,
-            num_heads=8,
-            mask=True  # Mask out future positions
+    for _ in range(num_layers):
+        # Masked self-attention (can't look at future tokens)
+        self_attn = MultiHeadAttention(
+            query=x, key=x, value=x, heads=8, mask=causal_mask
         )
-        # Add & Norm
-        y = LayerNorm(y + masked_attn_output)
+        x = LayerNorm(x + Dropout(self_attn))
         
-        # Encoder-decoder attention: decoder attends to encoder output
-        cross_attn_output = MultiHeadAttention(
-            query=y,  # From decoder
-            key=encoder_output,  # From encoder
-            value=encoder_output,  # From encoder
-            num_heads=8
+        # Cross-attention to encoder output
+        cross_attn = MultiHeadAttention(
+            query=x, key=memory, value=memory, heads=8
         )
-        # Add & Norm
-        y = LayerNorm(y + cross_attn_output)
+        x = LayerNorm(x + Dropout(cross_attn))
         
-        # Position-wise feed-forward network
-        ffn_output = FeedForward(y, d_ff=2048)
-        # Add & Norm
-        y = LayerNorm(y + ffn_output)
+        # Feed-forward
+        ff = FeedForward(x, d_ff=2048)
+        x = LayerNorm(x + Dropout(ff))
     
-    return y
+    return x
 
 
-# Multi-Head Attention Mechanism
-def MultiHeadAttention(query, key, value, num_heads=8, d_k=64, d_v=64, mask=False):
+def MultiHeadAttention(query, key, value, heads=8, mask=None):
     """
-    Apply multiple attention heads in parallel
-    
-    Args:
-        query: Query vectors (seq_len, d_model)
-        key: Key vectors (seq_len, d_model)
-        value: Value vectors (seq_len, d_model)
-        num_heads: Number of parallel attention heads
-        d_k: Dimension of queries and keys per head
-        d_v: Dimension of values per head
-        mask: Whether to apply masking (for decoder self-attention)
-    Returns:
-        Multi-head attention output (seq_len, d_model)
+    Parallel attention with multiple heads
+    Args: query, key, value (seq_len, d_model)
+    Returns: multi-head attention output
     """
-    d_model = query.shape[-1]
-    heads = []
+    d_k = d_model // heads  # 512 / 8 = 64 per head
     
-    # Run attention in parallel for each head
-    for i in range(num_heads):
-        # Linear projections for this head
-        Q_i = Linear(query, d_model -> d_k)
-        K_i = Linear(key, d_model -> d_k)
-        V_i = Linear(value, d_model -> d_v)
-        
-        # Scaled dot-product attention
-        head_i = ScaledDotProductAttention(Q_i, K_i, V_i, mask)
-        heads.append(head_i)
+    # Linear projections split across heads
+    Q = Linear(query).split_heads(heads, d_k)    # (heads, seq_len, d_k)
+    K = Linear(key).split_heads(heads, d_k)
+    V = Linear(value).split_heads(heads, d_k)
     
-    # Concatenate all heads
-    multi_head = Concat(heads)  # Shape: (seq_len, num_heads * d_v)
-    
-    # Final linear projection
-    output = Linear(multi_head, num_heads * d_v -> d_model)
-    
-    return output
-
-
-# Scaled Dot-Product Attention
-def ScaledDotProductAttention(Q, K, V, mask=False):
-    """
-    Core attention mechanism using scaled dot-product
-    
-    Args:
-        Q: Query matrix (seq_len, d_k)
-        K: Key matrix (seq_len, d_k)
-        V: Value matrix (seq_len, d_v)
-        mask: Whether to mask future positions
-    Returns:
-        Attention output (seq_len, d_v)
-    """
-    d_k = Q.shape[-1]
-    
-    # Compute attention scores
-    scores = MatMul(Q, Transpose(K))  # (seq_len, seq_len)
-    scores = scores / sqrt(d_k)  # Scale by sqrt of dimension
-    
-    # Apply mask if needed (set future positions to -inf)
+    # Scaled dot-product attention per head
+    scores = (Q @ K.T) / sqrt(d_k)
     if mask:
-        scores = MaskFuture(scores, value=-inf)
+        scores.masked_fill(mask, -inf)
     
-    # Convert to probabilities
-    attention_weights = Softmax(scores, dim=-1)
+    attn_weights = Softmax(scores)
+    head_outputs = attn_weights @ V
     
-    # Apply attention to values
-    output = MatMul(attention_weights, V)  # (seq_len, d_v)
-    
-    return output
+    # Concatenate heads and final projection
+    concat = head_outputs.concat_heads()
+    return Linear(concat)
 
 
-# Position-wise Feed-Forward Network
 def FeedForward(x, d_ff=2048):
     """
-    Two-layer fully connected network applied to each position
-    
-    Args:
-        x: Input (seq_len, d_model=512)
-        d_ff: Hidden dimension (default: 2048)
-    Returns:
-        Output (seq_len, d_model=512)
+    Position-wise FFN: two linear layers with ReLU
     """
-    hidden = Linear(x, d_model -> d_ff)
-    hidden = ReLU(hidden)
-    output = Linear(hidden, d_ff -> d_model)
-    return output
+    return Linear(ReLU(Linear(x, out=d_ff)), out=d_model)
 
 
-# Positional Encoding
 def PositionalEncoding(seq_len, d_model=512):
     """
-    Generate sinusoidal positional encodings
-    
-    Args:
-        seq_len: Length of sequence
-        d_model: Model dimension (must match embedding size)
-    Returns:
-        Positional encodings (seq_len, d_model)
+    Sinusoidal position encoding
+    PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+    PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
     """
-    pos_encoding = zeros(seq_len, d_model)
+    pos_enc = zeros(seq_len, d_model)
+    position = arange(seq_len).unsqueeze(1)
+    div_term = exp(arange(0, d_model, 2) * -(log(10000.0) / d_model))
     
-    for pos in range(seq_len):
-        for i in range(0, d_model, 2):
-            # Even dimensions: sine
-            pos_encoding[pos, i] = sin(pos / 10000^(2i/d_model))
-            # Odd dimensions: cosine
-            if i + 1 < d_model:
-                pos_encoding[pos, i+1] = cos(pos / 10000^(2i/d_model))
+    pos_enc[:, 0::2] = sin(position * div_term)
+    pos_enc[:, 1::2] = cos(position * div_term)
     
-    return pos_encoding
-```
+    return pos_enc
+Key innovation: Everything happens in parallel. No sequential dependencies means you can throw massive compute at training.
 
-This architecture enables parallel processing of all positions and constant-time communication between any pair of positions, which are the key innovations that made Transformers so much more efficient than previous models.
+💬 Discussion Questions
+Question 1: Why Remove Recurrence and Convolution?
+Consider:
 
----
+RNNs require n sequential operations for a sequence of length n. What does this mean for parallelization?
+How does path length between distant positions affect learning?
+What's the tradeoff between O(n²) complexity and O(1) sequential operations?
 
-## 💬 Discussion Questions
+Answer: RNNs can't parallelize within a training example because each step depends on the previous one. For long sequences, this is brutally slow. Self-attention trades spatial complexity (O(n²)) for temporal parallelism (O(1) sequential steps), which works because n is usually smaller than d_model (512), and GPUs handle matrix operations efficiently. The O(1) path length also makes learning long-range dependencies way easier.
+Question 2: What Does Positional Encoding Solve?
+Consider:
 
-### Question 1: Why Did the Authors Remove Recurrence and Convolution?
+Self-attention computes weighted sums based on content similarity. Does this use position information?
+What happens if we permute the input sequence?
+Why use sin/cos instead of learned embeddings?
 
-**Think about these points:**
-- What computational bottlenecks did RNNs have during training?
-- How does the sequential nature of RNNs limit parallelization?
-- What advantages does self-attention provide in terms of learning long-range dependencies?
-- Consider the path length between distant positions in the sequence
+Answer: Self-attention is permutation-invariant—swap word order and you get the same output. "Dog bites man" = "Man bites dog" without positional info. Sinusoidal encoding injects position information while allowing the model to generalize to longer sequences than seen during training (learned embeddings don't extrapolate as well). The different frequencies let the model learn to attend by relative position.
 
-**Key insight:** The sequential computation in RNNs means you can't parallelize within a single training example. For a sequence of length n, you need n sequential operations. With self-attention, you only need 1 operation (though it has O(n²) complexity in terms of memory and computation). This tradeoff favors self-attention for sequences shorter than the model dimension, which is typically the case.
+🔍 Critical Analysis
+Major Limitations
+1. Quadratic Memory/Compute with Sequence Length
+O(n²) attention is brutal for long sequences. The paper mentions this but doesn't explore solutions. For a 1000-token sequence, that's 1M attention weights per head per layer. This became a huge bottleneck for documents, high-res images, etc. Spawned a whole subfield: Longformer (sparse attention), Linformer (low-rank approximation), BigBird (random + local + global attention).
+2. Interpretability Hand-waving
+The paper shows cool attention visualizations but doesn't rigorously analyze what the model learns. Recent work shows attention weights aren't always interpretable as "importance." Some heads learn syntactic patterns, others seem random. The feed-forward layers actually do most of the heavy lifting for many tasks.
+3. No Inductive Bias = Data Hungry
+Removing architectural assumptions means the model must learn everything from data. This requires massive datasets. The paper doesn't explore low-data regimes or whether some structural bias might help. Compare to CNNs, which have translation equivariance baked in and work well with less data.
+4. Positional Encoding Could Be Better
+Additive sinusoidal encoding is elegant but not optimal. Learned embeddings can work better for specific sequence lengths. Relative position representations (Transformer-XL) or rotary embeddings (RoFormer) outperform fixed sinusoidal encoding. The paper doesn't explore these alternatives.
+What Subsequent Work Corrected
+"Attention is all you need" is overstated. Research shows:
 
-### Question 2: What Problem Does Positional Encoding Solve?
+Feed-forward layers crucial (not just attention)
+Layer norm placement matters more than initially thought
+Many attention heads are redundant (can prune 40%+ without performance loss)
+Initialization and learning rate schedules are critical
 
-**Consider:**
-- What information does self-attention inherently lack?
-- Why is word order important for language understanding?
-- How do the sine/cosine functions encode position?
-- What would happen if we didn't include positional information?
+Should Have Explored
 
-**Key insight:** Self-attention is actually permutation-invariant—it treats the input as a set, not a sequence. Without positional encoding, "The cat ate the mouse" would be identical to "The mouse ate the cat" as far as the model is concerned. Positional encodings inject sequence order information while still allowing the model to easily learn to attend to relative positions.
+Pretraining paradigms: The paper trains from scratch. BERT/GPT showed pretraining on unlabeled data is huge.
+Scaling laws: How does performance scale with model/data/compute? GPT-3 systematically studied this.
+Other modalities: Took 3 years for Vision Transformers. Could have been explored sooner.
 
----
 
-## 🔍 Critical Analysis
+🌍 Impact
+This paper fundamentally changed AI. Not exaggerating—it's the foundation of modern deep learning.
+Paradigm Shifts
+1. Task-Agnostic Architectures
+Pre-2017: Custom architecture for each task (different models for translation, classification, QA, etc.)
+Post-Transformer: One architecture for everything. Just change the task head.
+2. Scale is All You Need
+Transformers parallelze so well that we could suddenly train 100B+ parameter models. This unlocked emergent capabilities:
 
-While "Attention Is All You Need" was groundbreaking, it's worth examining what the paper overlooked or where subsequent research has improved on the original design.
+GPT-2 (2019): 1.5B params, coherent long-form text
+GPT-3 (2020): 175B params, few-shot learning without fine-tuning
+GPT-4 (2023): Multimodal, reasoning, near-human performance on many tasks
 
-### What the Authors Overlooked or Underexplored
+3. Attention Everywhere
+Once proven for NLP, Transformers spread to every domain:
 
-**1. Quadratic Complexity for Long Sequences**
+Vision: ViT (2020) matches/beats CNNs for image classification
+Multimodal: CLIP, DALL-E, GPT-4V combine vision + language
+Biology: AlphaFold 2 uses Transformers for protein structure prediction
+RL: Decision Transformer treats RL as sequence prediction
+Audio: Whisper (speech recognition), Jukebox (music generation)
 
-The biggest practical limitation is that self-attention has O(n²) time and memory complexity with respect to sequence length. For each position, you need to compute attention over all other positions, which means the cost grows quadratically. The paper briefly mentions this but doesn't explore it deeply. This became a major bottleneck when people tried to apply Transformers to really long sequences like entire documents or high-resolution images. Later work like Longformer, BigBird, and Linformer specifically addressed this with sparse attention patterns.
+Built On / Influenced
+Foundations from prior work:
 
-**2. Limited Interpretability Analysis**
+Attention mechanism (Bahdanau et al., 2014)
+Residual connections (ResNet, 2015)
+Layer normalization (2016)
 
-The paper shows some cool attention visualizations in the appendix, but doesn't really dig into what the model is learning or why it works so well. Are the attention heads learning linguistic features like syntax? How much does each component contribute? Recent work has shown that attention weights don't always correspond to what we'd call "importance" in an interpretable sense, and that the model's behavior is more complex than just "attending to relevant words."
+Directly enabled:
 
-**3. Lack of Inductive Biases**
+BERT (2018): Bidirectional pretraining, crushed 11 NLP benchmarks
+GPT series (2018-2023): Autoregressive language modeling at scale
+T5 (2019): Text-to-text unified framework
+Vision Transformers (2020): Pure attention for images
+ChatGPT/Claude (2022+): Conversational AI
 
-By removing all architectural assumptions (no recurrence for sequences, no convolution for locality), the Transformer relies entirely on learning everything from data. This is powerful but also means you need a LOT of data. The paper doesn't fully explore whether some architectural inductive biases might actually help, especially in low-data settings. This is why models like BERT needed massive pretraining datasets.
+Real-World Products
+Transformers power things you use daily:
 
-**4. Positional Encoding Limitations**
+ChatGPT, Claude, Gemini (LLM chatbots)
+Google Translate (switched to Transformers in 2016-2017)
+GitHub Copilot (code completion)
+DALL-E, Midjourney, Stable Diffusion (image generation)
+Grammarly (writing assistance)
+YouTube/Netflix recommendations
+Google Search (BERT for query understanding)
 
-The sinusoidal positional encoding is clever, but it's additive rather than multiplicative, and it's the same across all layers. Some research has shown that learned positional embeddings or relative position representations (like in Transformer-XL) can work better. The paper doesn't explore these alternatives much.
+Why It Matters
+100,000+ citations and counting. The title became a meme, but it's actually true. Transformers are the default architecture for basically everything now. They showed that:
 
-### Errors or Disputed Findings
+Architecture matters more than task-specific engineering
+Parallelization enables scale, scale enables capabilities
+Attention is a universal computation primitive
 
-There aren't really any major errors in the paper—the math checks out and the results have been replicated many times. However, some claims have been refined by later work:
+This paper didn't just improve BLEU scores—it redefined what's possible with AI.
 
-- The claim that "attention is all you need" is a bit overstated. Subsequent research showed that other components (like the feed-forward layers, layer norms, and residual connections) are actually crucial for performance.
-- The paper suggests that multi-head attention helps because different heads can focus on different relationships. While this is true to some extent, research has shown that many heads learn redundant patterns, and you can actually prune a lot of heads without hurting performance much.
+💻 Code Demo
+Translation with T5
+pythonfrom transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-### What Could Have Been Developed Further
+tokenizer = AutoTokenizer.from_pretrained("t5-small")
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
 
-**Multimodal Extensions:** The paper focuses exclusively on text. It would have been interesting to see how the architecture handles other modalities like images or audio. Vision Transformers (ViT) didn't come until 2020, and they showed that with some modifications, Transformers work great for vision too.
-
-**Analysis of Scaling Laws:** The paper shows that bigger models work better but doesn't systematically study how performance scales with model size, data size, and compute. This became a huge area of research with GPT-3 and other large language models.
-
-**Pretraining Strategies:** The Transformer was trained from scratch on translation tasks. The paper doesn't explore pretraining on large unlabeled datasets, which turned out to be massive for BERT and GPT.
-
----
-
-## 🌍 Impact
-
-This paper didn't just advance the state-of-the-art—it fundamentally changed how we think about and build AI systems. It's not an exaggeration to say that the Transformer architecture is the foundation of modern AI.
-
-### How It Changed the AI Landscape
-
-**1. From Task-Specific to General-Purpose Architectures**
-
-Before Transformers, researchers would design custom architectures for each task (one for translation, one for text classification, one for question answering, etc.). The Transformer showed that a single architecture could work across many tasks with minimal modifications. This shift toward general-purpose architectures accelerated progress massively because improvements to the core architecture benefited everyone working on any NLP task.
-
-**2. Enabled Large-Scale Pretraining**
-
-The parallelization benefits of Transformers made it feasible to train truly massive models on huge datasets. This led to the "pretrain then fine-tune" paradigm that dominates modern NLP:
-- **BERT (2018):** Bidirectional Transformer pretrained on masked language modeling, set new records on 11 NLP tasks
-- **GPT-2 (2019):** 1.5B parameter Transformer, showed impressive zero-shot capabilities
-- **GPT-3 (2020):** 175B parameters, demonstrated few-shot learning and broad task generalization
-- **GPT-4 (2023):** Multimodal capabilities, reasoning improvements
-
-**3. Sparked the "Attention Revolution" Beyond NLP**
-
-Once people saw how well Transformers worked for language, they started applying them everywhere:
-- **Vision Transformers (ViT, 2020):** Showed that pure Transformers can match or beat CNNs for image classification
-- **Audio Models:** Whisper for speech recognition, MusicGen for music generation
-- **Multimodal Models:** CLIP (vision + language), Flamingo, GPT-4V
-- **Reinforcement Learning:** Decision Transformer treats RL as a sequence modeling problem
-- **Protein Folding:** AlphaFold 2 uses Transformers for 3D structure prediction
-- **Time Series:** Transformers for forecasting, anomaly detection
-
-### Intersection with Other Work
-
-**Past Work It Built Upon:**
-- Attention mechanisms from Bahdanau et al. (2014)
-- Residual connections from ResNet (He et al., 2016)
-- Layer normalization (Ba et al., 2016)
-- Ideas about parallel computation from ByteNet (Kalchbrenner et al., 2016)
-
-**Foundational for Later Work:**
-- **BERT & Masked Language Modeling:** Used Transformer encoder for bidirectional pretraining
-- **GPT Series:** Used Transformer decoder for autoregressive language modeling
-- **T5:** "Text-to-Text Transfer Transformer" unified many NLP tasks
-- **Switch Transformers & Mixture of Experts:** Scaled to trillions of parameters
-- **Efficient Transformers:** Linformer, Performer, Reformer tackled the quadratic complexity issue
-- **Retrieval-Augmented Generation:** Combined Transformers with external knowledge bases
-
-### Real-World Applications Today
-
-The impact isn't just academic—Transformers power tons of products and services you probably use:
-
-- **ChatGPT, Claude, Gemini:** All built on Transformer architectures
-- **Google Translate:** Switched to Transformer-based models in 2016-2017
-- **GitHub Copilot:** Uses GPT models (Transformers) for code completion
-- **Grammarly:** Transformer-based grammar and style checking
-- **Recommendation Systems:** YouTube, Netflix use Transformers for personalization
-- **Search Engines:** Google BERT helps understand search queries
-- **Content Moderation:** Detecting harmful content on social media platforms
-
-### Why This Paper Matters
-
-In retrospect, "Attention Is All You Need" is one of those rare papers that defines an era. It's cited over 100,000 times (as of 2024) and counting. The title itself became iconic—a bold claim that turned out to be mostly true.
-
-The Transformer didn't just improve translation scores. It provided a scalable, flexible, parallelizable architecture that could be trained on massive datasets and adapted to virtually any task. It opened the door to the current era of large language models and has fundamentally changed what we think is possible with AI.
-
----
-
-## 💻 Code Demo
-
-Let's see the Transformer in action! Here's a practical example using Hugging Face's `transformers` library, which has become the de facto standard for working with Transformer models.
-
-### Basic Translation Example
-
-```python
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-# Load a pretrained T5 model (based on the Transformer architecture)
-model_name = "t5-small"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
-# Translate English to German
-text = "translate English to German: The Transformer architecture revolutionized NLP."
+# Translate
+text = "translate English to German: Transformers changed everything."
 inputs = tokenizer(text, return_tensors="pt")
-outputs = model.generate(**inputs, max_length=50)
+outputs = model.generate(**inputs)
 
-translation = tokenizer.decode(outputs[0], skip_special_tokens=True)
-print(f"Translation: {translation}")
-# Output: "Die Transformator-Architektur revolutionierte NLP."
-```
-
-### Exploring Attention Weights
-
-```python
-from transformers import AutoTokenizer, AutoModel
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+# Output: "Transformatoren haben alles verändert."
+Visualizing Attention
+pythonfrom transformers import AutoTokenizer, AutoModel
 import torch
 
-# Load BERT (uses Transformer encoder)
-model_name = "bert-base-uncased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModel.from_pretrained(model_name, output_attentions=True)
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased", output_attentions=True)
 
-# Encode a sentence
-text = "The cat sat on the mat."
+text = "The cat sat on the mat"
 inputs = tokenizer(text, return_tensors="pt")
 
-# Get model outputs with attention weights
 with torch.no_grad():
     outputs = model(**inputs)
 
-# Access attention weights
-# Shape: (num_layers, batch_size, num_heads, seq_len, seq_len)
-attentions = outputs.attentions
+# Get attention weights from layer 6, head 3
+attention = outputs.attentions[5][0, 2]  # (seq_len, seq_len)
 
-# Look at attention from layer 6, head 3
-layer_6_head_3 = attentions[5][0, 2]  # Layer 6, head 3
-print(f"Attention shape: {layer_6_head_3.shape}")
-print(f"Attention weights:\n{layer_6_head_3}")
-
-# You can visualize which words "cat" attends to
 tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
+print(f"Tokens: {tokens}")
+print(f"Attention from 'cat' to other words:")
 cat_idx = tokens.index('cat')
-cat_attention = layer_6_head_3[cat_idx]
-for token, weight in zip(tokens, cat_attention):
-    print(f"{token}: {weight:.4f}")
-```
-
-### Fine-Tuning a Transformer
-
-```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
+for token, weight in zip(tokens, attention[cat_idx]):
+    print(f"  {token}: {weight:.3f}")
+Fine-Tuning for Classification
+pythonfrom transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from datasets import load_dataset
 
-# Load a sentiment analysis dataset
-dataset = load_dataset("imdb", split="train[:1000]")  # Small subset for demo
+# Load data
+dataset = load_dataset("imdb", split="train[:1000]")
 
-# Load pretrained model
-model_name = "distilbert-base-uncased"  # Smaller, faster version of BERT
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=2)
+# Model setup
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
 
-# Tokenize the data
-def tokenize_function(examples):
-    return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=512)
+# Tokenize
+def tokenize(examples):
+    return tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512)
 
-tokenized_dataset = dataset.map(tokenize_function, batched=True)
+tokenized = dataset.map(tokenize, batched=True)
 
-# Set up training
+# Train
 training_args = TrainingArguments(
     output_dir="./results",
     num_train_epochs=1,
     per_device_train_batch_size=8,
-    save_steps=100,
-    save_total_limit=2,
 )
 
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_dataset,
-)
-
-# Train the model
+trainer = Trainer(model=model, args=training_args, train_dataset=tokenized)
 trainer.train()
-
-# Use the fine-tuned model
-test_text = "This movie was absolutely fantastic! I loved every minute of it."
-inputs = tokenizer(test_text, return_tensors="pt")
-outputs = model(**inputs)
-prediction = torch.argmax(outputs.logits, dim=1)
-print(f"Sentiment: {'Positive' if prediction == 1 else 'Negative'}")
-```
-
-### Building a Mini-Transformer from Scratch
-
-Here's a simplified implementation to understand the core concepts:
-
-```python
-import torch
+Building from Scratch
+pythonimport torch
 import torch.nn as nn
 import math
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, num_heads):
+    def __init__(self, d_model=512, num_heads=8):
         super().__init__()
         self.d_model = d_model
         self.num_heads = num_heads
@@ -547,120 +315,61 @@ class MultiHeadAttention(nn.Module):
         self.W_v = nn.Linear(d_model, d_model)
         self.W_o = nn.Linear(d_model, d_model)
         
-    def scaled_dot_product_attention(self, Q, K, V, mask=None):
-        # Calculate attention scores
-        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
-        
-        if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
-        
-        attention = torch.softmax(scores, dim=-1)
-        output = torch.matmul(attention, V)
-        return output
-    
-    def forward(self, x, mask=None):
-        batch_size = x.size(0)
-        
-        # Linear projections
-        Q = self.W_q(x).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        K = self.W_k(x).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        V = self.W_v(x).view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
-        
-        # Apply attention
-        x = self.scaled_dot_product_attention(Q, K, V, mask)
-        
-        # Concatenate heads and apply final linear
-        x = x.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
-        x = self.W_o(x)
-        return x
-
-class FeedForward(nn.Module):
-    def __init__(self, d_model, d_ff):
-        super().__init__()
-        self.linear1 = nn.Linear(d_model, d_ff)
-        self.linear2 = nn.Linear(d_ff, d_model)
-        self.relu = nn.ReLU()
-    
     def forward(self, x):
-        return self.linear2(self.relu(self.linear1(x)))
+        batch_size, seq_len, _ = x.size()
+        
+        # Project and split heads
+        Q = self.W_q(x).view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        K = self.W_k(x).view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        V = self.W_v(x).view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        
+        # Scaled dot-product attention
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+        attn = torch.softmax(scores, dim=-1)
+        out = torch.matmul(attn, V)
+        
+        # Concatenate heads
+        out = out.transpose(1, 2).contiguous().view(batch_size, seq_len, self.d_model)
+        return self.W_o(out)
 
 class TransformerBlock(nn.Module):
-    def __init__(self, d_model, num_heads, d_ff, dropout=0.1):
+    def __init__(self, d_model=512, num_heads=8, d_ff=2048):
         super().__init__()
-        self.attention = MultiHeadAttention(d_model, num_heads)
+        self.attn = MultiHeadAttention(d_model, num_heads)
+        self.ff = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Linear(d_ff, d_model)
+        )
         self.norm1 = nn.LayerNorm(d_model)
         self.norm2 = nn.LayerNorm(d_model)
-        self.feed_forward = FeedForward(d_model, d_ff)
-        self.dropout = nn.Dropout(dropout)
-    
-    def forward(self, x, mask=None):
-        # Self-attention with residual connection
-        attn_output = self.attention(x, mask)
-        x = self.norm1(x + self.dropout(attn_output))
         
-        # Feed-forward with residual connection
-        ff_output = self.feed_forward(x)
-        x = self.norm2(x + self.dropout(ff_output))
-        
+    def forward(self, x):
+        x = self.norm1(x + self.attn(x))
+        x = self.norm2(x + self.ff(x))
         return x
 
-# Example usage
-d_model = 512
-num_heads = 8
-d_ff = 2048
-batch_size = 2
-seq_len = 10
+# Test it
+block = TransformerBlock()
+x = torch.randn(2, 10, 512)  # (batch, seq_len, d_model)
+output = block(x)
+print(f"Input: {x.shape}, Output: {output.shape}")
 
-# Create sample input
-x = torch.randn(batch_size, seq_len, d_model)
-
-# Create a single transformer block
-transformer_block = TransformerBlock(d_model, num_heads, d_ff)
-
-# Forward pass
-output = transformer_block(x)
-print(f"Input shape: {x.shape}")
-print(f"Output shape: {output.shape}")
-```
-
-These examples show how accessible Transformer models have become. You can use state-of-the-art models with just a few lines of code, or build your own from scratch to understand the internals!
-
----
-
-## 📚 Citation
-
-```bibtex
-@article{vaswani2017attention,
+📚 Citation
+bibtex@article{vaswani2017attention,
   title={Attention is all you need},
   author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
   journal={Advances in neural information processing systems},
   volume={30},
   year={2017}
 }
-```
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). Attention is All You Need. Advances in Neural Information Processing Systems, 30. https://arxiv.org/abs/1706.03762
 
-**Full Citation:**  
-Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). Attention is All You Need. *Advances in Neural Information Processing Systems*, 30. https://arxiv.org/abs/1706.03762
+🔗 Resource Links
 
----
+Original Paper (arXiv) - The paper that started it all
+Tensor2Tensor GitHub - Original TensorFlow implementation
+The Illustrated Transformer - Best visual explanation, read this first
+Hugging Face Docs - Industry standard library for transformers
+Annotated Transformer - Line-by-line PyTorch implementation with explanations
 
-## 🔗 Resource Links
-
-1. **[Original Paper (arXiv)](https://arxiv.org/abs/1706.03762)** - The original paper with all the mathematical details
-
-2. **[Tensor2Tensor GitHub Repository](https://github.com/tensorflow/tensor2tensor)** - Official implementation from Google
-
-3. **[The Illustrated Transformer by Jay Alammar](https://jalammar.github.io/illustrated-transformer/)** - Fantastic visual guide to understanding Transformers
-
-4. **[Hugging Face Transformers Documentation](https://huggingface.co/docs/transformers/)** - Industry-standard library for using pretrained Transformers
-
-5. **[Annotated Transformer by Harvard NLP](http://nlp.seas.harvard.edu/annotated-transformer/)** - Line-by-line implementation guide with explanations
-
----
-
-## 📊 Presentation Information
-
-**Course:** DS 5690 – Topics in Data Science  
-**Semester:** Fall 2025  
-**Institution:** Vanderbilt University 
-**Presenter:** Ashley Stevens
