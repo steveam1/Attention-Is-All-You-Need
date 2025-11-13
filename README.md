@@ -115,7 +115,7 @@ The Transformer is the first sequence transduction model relying entirely on sel
 
 ---
 
-## Attention Visualizations
+## Attention 
 
 One of the key advantages of the Transformer is the interpretability provided by attention weights. The paper includes several visualizations showing what different attention heads learn:
 
