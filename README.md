@@ -3,7 +3,6 @@
 **DS 5690 – Paper Project (Fall 2025)**
 
 **Authors:** Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin  
-**Affiliation:** Google Brain & Google Research  
 **Published:** NIPS 2017
 
 ---
@@ -306,6 +305,4 @@ Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Ka
 Attention Is All You Need. Advances in Neural Information Processing Systems (NeurIPS 2017). 
 https://arxiv.org/abs/1706.03762
 ```
-
-
 ---
