@@ -56,19 +56,42 @@ The Transformer solved this by allowing all words to be processed at once throug
 
 ## Model Architecture
 
-The Transformer follows an encoder-decoder structure but unlike older models, it removes recurrence and convolution completely. Instead, it relies entirely on self-attention to understand relationships between words. This design allows every word in a sentence to look at all other words at once, capturing both nearby and distant dependencies efficiently.
-
-### Architecture Diagram
-
 <img width="400" alt="Transformer Architecture" src="https://github.com/user-attachments/assets/876509dd-8a3c-41df-ba9a-1ad8940bfe52" />
 
 *Figure 1: The Transformer model architecture. The encoder (left) processes the input sequence, while the decoder (right) generates the output sequence. Both use stacked layers of multi-head attention and feed-forward networks.*
+
+The Transformer follows an encoder-decoder structure but unlike older models, it removes recurrence and convolution completely. Instead, it relies entirely on self-attention to understand relationships between words. This design allows every word in a sentence to look at all other words at once, capturing both nearby and distant dependencies efficiently.
 
 ### Attention Mechanism
 
 <img width="500" alt="Attention Mechanisms" src="https://github.com/user-attachments/assets/8794f9f2-1793-410f-9d02-b87a3dbeaa6b" />
 
 *Figure 2: (Left) Scaled Dot-Product Attention computes attention weights by taking the dot product of queries and keys, scaling, and applying softmax. (Right) Multi-Head Attention runs multiple attention operations in parallel, then concatenates and projects the results.*
+
+### What Attention Learns: Visual Evidence
+The attention visualizations below demonstrate that the model learns interpretable linguistic patterns:
+
+### Long-Distance Dependencies
+
+<img width="500" alt="Long-distance dependencies" src="https://github.com/user-attachments/assets/288fa181-541f-4d9b-bff9-4f2d2232038c" />
+
+*Figure 3: An attention head in layer 5 of 6 clearly learns to track long-distance dependencies. Many attention heads attend to the distant dependency of the verb 'making', completing the phrase 'making...more difficult'. Different colors represent different attention heads.*
+
+This demonstrates how attention heads can capture long-range syntactic relationships that were difficult for RNNs to learn due to vanishing gradients.
+
+### Anaphora Resolution
+
+<img width="500" alt="Anaphora resolution" src="https://github.com/user-attachments/assets/ae91d4f8-13b7-48bf-bdbd-572d72fd6a7b" />
+
+*Figure 4: Two attention heads in layer 5 of 6 apparently involved in anaphora resolution. Top: Full attention patterns for head 5. Bottom: Isolated attention from just the word 'its' for heads 5 and 6. The attention heads clearly learn to resolve references like 'its' back to 'the Law', with very sharp and focused attention weights.*
+
+This example shows how the model learns coreference resolution—understanding that "its" refers to "the Law"—purely from the training signal, without explicit linguistic supervision.
+
+### Sentence Structure Learning
+
+<img width="600" alt="Sentence structure" src="https://github.com/user-attachments/assets/6b7b5060-a167-4cec-bf19-00ea678664ca" />
+
+*Figure 5: Many attention heads exhibit behavior related to the structure of sentences. Two examples from layer 5 of 6 show how different heads learn to perform different structural tasks. The heads clearly learned different syntactic functions, such as attending to subjects, verbs, or dependent clauses.*
 
 ---
 
@@ -104,7 +127,7 @@ The Transformer follows an encoder-decoder structure but unlike older models, it
 ### Compared to RNNs
 - No sequential processing: The Transformer processes all positions at once instead of one token at a time, which allows full parallelization.
 - Constant time dependencies: Any two tokens can interact in a single step (O(1)) instead of needing to pass information through many RNN steps (O(n)).
-- No vanishing gradients: Because there is no recurrent chain, long sequences do not cause information to decay over tim
+- No vanishing gradients: Because there is no recurrent chain, long sequences do not cause information to decay over time.
 
 ### Compared to CNNs
 - Global receptive field: Every token can attend to every other token directly, without needing multiple convolution layers to expand the receptive field.
@@ -116,31 +139,6 @@ The Transformer introduced the first sequence transduction architecture built en
 
 ---
 
-## Attention 
-
-One of the key advantages of the Transformer is the interpretability provided by attention weights. The paper includes several visualizations showing what different attention heads learn:
-
-### Long-Distance Dependencies
-
-<img width="500" alt="Long-distance dependencies" src="https://github.com/user-attachments/assets/288fa181-541f-4d9b-bff9-4f2d2232038c" />
-
-*Figure 3: An attention head in layer 5 of 6 clearly learns to track long-distance dependencies. Many attention heads attend to the distant dependency of the verb 'making', completing the phrase 'making...more difficult'. Different colors represent different attention heads.*
-
-This demonstrates how attention heads can capture long-range syntactic relationships that were difficult for RNNs to learn due to vanishing gradients.
-
-### Anaphora Resolution
-
-<img width="500" alt="Anaphora resolution" src="https://github.com/user-attachments/assets/ae91d4f8-13b7-48bf-bdbd-572d72fd6a7b" />
-
-*Figure 4: Two attention heads in layer 5 of 6 apparently involved in anaphora resolution. Top: Full attention patterns for head 5. Bottom: Isolated attention from just the word 'its' for heads 5 and 6. The attention heads clearly learn to resolve references like 'its' back to 'the Law', with very sharp and focused attention weights.*
-
-This example shows how the model learns coreference resolution—understanding that "its" refers to "the Law"—purely from the training signal, without explicit linguistic supervision.
-
-### Sentence Structure Learning
-
-<img width="600" alt="Sentence structure" src="https://github.com/user-attachments/assets/6b7b5060-a167-4cec-bf19-00ea678664ca" />
-
-*Figure 5: Many attention heads exhibit behavior related to the structure of sentences. Two examples from layer 5 of 6 show how different heads learn to perform different structural tasks. The heads clearly learned different syntactic functions, such as attending to subjects, verbs, or dependent clauses.*
 
 ### Key Insights
 
