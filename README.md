@@ -7,22 +7,27 @@
 ---
 
 ## Overview
+Before the Transformer, most language models used Recurrent Neural Networks (RNNs) or Convolutional Neural Networks (CNNs) to process sequential data like text. These architectures had a major limitation because they processed words one at a time, making training slow, memory-intensive, and difficult to parallelize. They also struggled to capture long-range dependencies, meaning they often forgot earlier words in long sentences.
 
 ### The Problem
+The authors set out to answer a key question:
 
-Before 2017, NLP models relied on RNNs or CNNs both with serious limitations. RNNs processed sequences one token at a time, making them painfully slow to train and prone to forgetting long-range dependencies (vanishing gradients). CNNs were faster but couldn't effectively capture relationships between distant words. The core issue? Neither architecture could parallelize well which bottlenecked training on large datasets.
+Can we design a model that understands relationships between words—no matter how far apart—without relying on recurrence or convolution?
 
 ### The Approach
+Their proposed solution was the Transformer, a new neural network architecture built entirely on attention mechanisms. Instead of processing data sequentially, the Transformer uses self-attention to look at all words in a sentence simultaneously and determine which words influence each other the most. This parallel design makes training dramatically faster and more efficient.
 
-Vaswani proposed something radical which was to ditch recurrence and convolution entirely. The **Transformer** uses pure attention mechanisms to process all tokens simultaneously. Self-attention computes relationships between every pair of words in a sentence regardless of distance. Multiple attention heads run in parallel, each learning different linguistic patterns. Stack this 6 layers deep in both encoder and decoder, add positional encodings (since attention doesn't inherently understand order), and you've got a model that's both more powerful and more parallelizable.
+The model follows an encoder-decoder architecture made up of layers that use:
 
-### Results
+- Multi-Head Self-Attention: multiple attention “heads” capture different relationships (syntax, meaning, dependencies) between words.
+- Feed-Forward Networks: process and refine each token’s representation.
+- Positional Encoding: adds information about word order since the model no longer reads sequentially.
+- Residual Connections & Layer Normalization: stabilize training and improve performance.
 
-**28.4 BLEU** on WMT 2014 English-German (beating previous SOTA by 2+ BLEU)  
-**41.8 BLEU** on WMT 2014 English-French (new single-model record)  
-**12 hours** to train the base model on 8 GPUs (vs. days or weeks for previous models)
+By replacing recurrence with attention, the authors created a model that was not only faster to train but also achieved state-of-the-art performance in machine translation. The Transformer reached 28.4 BLEU on the English-to-German translation task and 41.8 BLEU on English-to-French—surpassing all previous models while training in a fraction of the time.
 
-The speed improvement was the real game-changer. Faster training → bigger models → better performance → the foundation for GPT, BERT, and everything after.
+The speed improvement was the real game-changer:
+Faster training → bigger models → better performance → the foundation for GPT, BERT, and every major model that followed.
 
 ---
 
