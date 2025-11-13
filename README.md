@@ -7,26 +7,36 @@
 ---
 
 ## Overview
-Before the Transformer, most language models relied on Recurrent Neural Networks (RNNs) or Convolutional Neural Networks (CNNs) to handle sequential text. RNNs processed sentences strictly one word at a time which made training slow and impossible to parallelize. They also struggled to retain information from earlier in long sentences because of vanishing gradients. CNNs were faster since they could process multiple positions in parallel but they mainly captured local patterns (like short phrases) and needed many stacked layers to model long-range relationships. As datasets grew and tasks demanded deeper contextual understanding these limitations became major bottlenecks. Researchers began looking for an approach that could model global relationships efficiently without relying on recurrence or deep convolution.
 
 ### The Problem
-The authors set out to solve this challenge by asking a key question:
 
-Can we design a model that understands relationships between words, no matter how far apart, without relying on recurrence or convolution?
+Before the Transformer, sequence transduction models (like machine translation) relied heavily on complex recurrent neural networks (RNNs) or convolutional neural networks (CNNs). These architectures faced significant limitations:
+
+- **Sequential Processing:** RNNs process tokens one at a time, preventing parallelization and making training slow
+- **Long-Range Dependencies:** RNNs struggle to learn dependencies between distant positions in sequences
+- **Computational Inefficiency:** The sequential nature creates memory constraints and limits batch processing
 
 ### The Approach
-To solve this challenge, the author's proposed remove recurrence and convolution entirely and build a model that relies only on attention. Instead of reading sentences word by word like RNNs, the Transformer looks at all words at the same time and learns which ones should pay attention to each other. This makes training massively faster and helps the model capture long-distance relationships that older architectures struggled with.
 
-The Transformer uses an encoder–decoder structure made of repeated blocks that include:
+The paper introduces the **Transformer**, a novel architecture that completely abandons recurrence and convolutions, relying entirely on **attention mechanisms**. The key innovation is the use of:
 
-- Multi-Head Self-Attention: lets the model look at different types of word relationships in parallel.
-- Feed-Forward Networks: apply a small neural network to each position to refine the representation.
-- Positional Encoding: tells the model the order of the words since it doesn’t process them sequentially.
-- Residual Connections + Layer Norm: help stabilize training and prevent information from being lost as it passes through layers.
+1. **Self-Attention Mechanisms:** Allow the model to weigh the importance of different positions in the input sequence when encoding each position
+2. **Multi-Head Attention:** Enables the model to jointly attend to information from different representation subspaces
+3. **Positional Encoding:** Injects sequence order information without using recurrence
 
-Together, these components allow the Transformer to learn globally, train quickly, and scale to large datasets. In the original paper, this architecture set new records on machine translation tasks, showing that attention alone was not just simpler—it was better.
+### How the Problem Was Addressed
+
+The Transformer architecture addresses the limitations through:
+
+- **Parallelization:** All positions can be processed simultaneously, dramatically reducing training time
+- **Constant Path Length:** Dependencies between any two positions require only O(1) operations, compared to O(n) for RNNs
+- **Superior Performance:** Achieved state-of-the-art BLEU scores on machine translation tasks (28.4 on WMT 2014 English-to-German)
+- **Training Efficiency:** Trained in just 3.5 days on 8 GPUs, a fraction of the time required by previous models
+
+The model was validated on WMT 2014 English-to-German and English-to-French translation tasks, as well as English constituency parsing, demonstrating its generalizability.
 
 ---
+
 
 ## Quesiton 1
 What do you think the authors meant when they said ‘attention is all you need’? What makes attention powerful enough to replace recurrence and convolution?
@@ -35,6 +45,8 @@ Answer: Processing text one word at a time makes training very slow and limits h
 
 ## Model Architecture
 The Transformer follows an encoder decoder structure but unlike older models, it removes recurrence and convolution completely. Instead, it relies entirely on self attention to understand relationships between words. This design allows every word in a sentence to look at all other words at once, capturing both nearby and distant dependencies efficiently.
+<img width="220" height="266" alt="Screenshot 2025-11-13 at 9 01 20 AM" src="https://github.com/user-attachments/assets/876509dd-8a3c-41df-ba9a-1ad8940bfe52" />
+
 
 ## Pseudocode Description
 Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
