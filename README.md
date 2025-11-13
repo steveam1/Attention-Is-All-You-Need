@@ -7,7 +7,7 @@
 ---
 
 ## Overview
-Before the Transformer, most language models used Recurrent Neural Networks (RNNs) or Convolutional Neural Networks (CNNs) to process sequential data like text. These architectures had a major limitation because they processed words one at a time, making training slow, memory-intensive, and difficult to process in parallel. They also struggled to capture long-range dependencies, meaning they often forgot earlier words in long sentences. As datasets and model sizes grew, these limitations became a major bottleneck for progress in natural language processing. Researchers began looking for a new approach that could handle sequences more efficiently while still understanding complex word relationships across an entire sentence.
+Before the Transformer, most language models relied on Recurrent Neural Networks (RNNs) or Convolutional Neural Networks (CNNs) to handle sequential text. RNNs processed sentences strictly one word at a time which made training slow and impossible to parallelize. They also struggled to retain information from earlier in long sentences because of vanishing gradients. CNNs were faster since they could process multiple positions in parallel but they mainly captured local patterns (like short phrases) and needed many stacked layers to model long-range relationships. As datasets grew and tasks demanded deeper contextual understanding these limitations became major bottlenecks. Researchers began looking for an approach that could model global relationships efficiently without relying on recurrence or deep convolution.
 
 ### The Problem
 The authors set out to solve this challenge by asking a key question:
@@ -15,16 +15,16 @@ The authors set out to solve this challenge by asking a key question:
 Can we design a model that understands relationships between words, no matter how far apart, without relying on recurrence or convolution?
 
 ### The Approach
-To solve this challenge, the authors introduced the Transformer, a model built entirely on attention mechanisms. Instead of reading text one word at a time like earlier models, the Transformer looks at every word in a sentence at once and learns which words are most connected to each other. This design makes training much faster and allows the model to capture relationships across the entire sentence, even between words that are far apart.
+To solve this challenge, the author's proposed remove recurrence and convolution entirely and build a model that relies only on attention. Instead of reading sentences word by word like RNNs, the Transformer looks at all words at the same time and learns which ones should pay attention to each other. This makes training massively faster and helps the model capture long-distance relationships that older architectures struggled with.
 
-The Transformer follows an encoder-decoder structure made up of repeating layers that include:
+The Transformer uses an encoder–decoder structure made of repeated blocks that include:
 
-- Multi-Head Self-Attention: lets the model focus on different types of word relationships, such as meaning, grammar, or context.
-- Feed Forward Networks: refine and transform the information for each word position.
-- Positional Encoding: adds information about word order since the model itself does not read sequentially.
-- Residual Connections and Layer Normalization: keep learning stable and prevent information loss between layers.
+- Multi-Head Self-Attention: lets the model look at different types of word relationships in parallel.
+- Feed-Forward Networks: apply a small neural network to each position to refine the representation.
+- Positional Encoding: tells the model the order of the words since it doesn’t process them sequentially.
+- Residual Connections + Layer Norm: help stabilize training and prevent information from being lost as it passes through layers.
 
-This combination allowed the Transformer to train much more efficiently while improving translation accuracy. It was able to achieve record-breaking results on English-to-German and English-to-French translation tasks, proving that attention alone could outperform more complex and slower architectures.
+Together, these components allow the Transformer to learn globally, train quickly, and scale to large datasets. In the original paper, this architecture set new records on machine translation tasks, showing that attention alone was not just simpler—it was better.
 
 ---
 
