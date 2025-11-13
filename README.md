@@ -39,7 +39,7 @@ The Transformer follows an encoder decoder structure but unlike older models, it
 ## Pseudocode Description
 Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
 
-# Encoder
+Encoder:
 1. Convert tokens to embeddings
 2. Add positional encodings to preserve word order
 3. For each of the 6 encoder layers:
@@ -48,7 +48,7 @@ Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
       c. Add residual connection and layer normalization
 4. Output encoded representation Z
 
-# Decoder
+Decoder:
 5. Take previous outputs (shifted right) as input Y
 6. Add positional encodings
 7. For each of the 6 decoder layers:
@@ -60,7 +60,8 @@ Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
       d. Add residual connection and layer normalization
 8. Apply linear layer and softmax to produce probabilities for next word
 
-Output: Translated or generated sequence
+Output: 
+Translated or generated sequence
 
 ##How It Differs from Previous Models
 
