@@ -49,6 +49,7 @@ Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
 4. Output encoded representation **Z**
 
 **Decoder:**
+
 5. Take previous outputs (shifted right) as input **Y**  
 6. Add positional encodings  
 7. For each of the 6 decoder layers:  
