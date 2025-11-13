@@ -149,7 +149,7 @@ These visualizations demonstrate that:
 - Specialization: Different attention heads learn to focus on different linguistic phenomena
 - Interpretability: The model learns interpretable patterns related to syntax and semantics without explicit supervision
 - Linguistic Knowledge: Attention provides insights into model behavior that were difficult to obtain with RNNs
-- 
+  
 ---
 
 ## Question 2
