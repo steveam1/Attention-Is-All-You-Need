@@ -39,31 +39,30 @@ The Transformer follows an encoder decoder structure but unlike older models, it
 ## Pseudocode Description
 Input: Sequence of tokens (words) → X = [x1, x2, ..., xn]
 
-Encoder:
-1. Convert tokens to embeddings
-2. Add positional encodings to preserve word order
-3. For each of the 6 encoder layers:
-      a. Apply multi head self attention to X
-      b. Apply feed forward network to the result
-      c. Add residual connection and layer normalization
-4. Output encoded representation Z
+**Encoder:**
+1. Convert tokens to embeddings  
+2. Add positional encodings to preserve word order  
+3. For each of the 6 encoder layers:  
+    a. Apply multi-head self-attention to X  
+    b. Apply feed-forward network  
+    c. Add residual connection and layer normalization  
+4. Output encoded representation **Z**
 
-Decoder:
-5. Take previous outputs (shifted right) as input Y
-6. Add positional encodings
-7. For each of the 6 decoder layers:
-      a. Apply masked multi head self attention to Y 
-         (so the model cannot look ahead)
-      b. Apply encoder decoder attention using Z
-         (connects understanding from encoder to decoder)
-      c. Apply feed forward network
-      d. Add residual connection and layer normalization
-8. Apply linear layer and softmax to produce probabilities for next word
+**Decoder:**
+5. Take previous outputs (shifted right) as input **Y**  
+6. Add positional encodings  
+7. For each of the 6 decoder layers:  
+    a. Apply masked multi-head self-attention to Y  
+    b. Apply encoder–decoder attention using Z  
+    c. Apply feed-forward network  
+    d. Add residual connection and layer normalization  
+8. Apply linear layer + softmax to produce next-word probabilities  
 
-Output: 
+**Output:**  
 Translated or generated sequence
 
-##How It Differs from Previous Models
+
+## How It Differs from Previous Models
 
 Traditional RNNs processed one word at a time, passing information step by step through a hidden state. This made training slow and caused long sentences to lose context. CNNs improved parallel processing but still struggled with long distance dependencies.
 
