@@ -11,30 +11,31 @@
 
 ### The Problem
 
-Before the Transformer, sequence transduction models (like machine translation) relied heavily on complex recurrent neural networks (RNNs) or convolutional neural networks (CNNs). These architectures faced significant limitations:
+Before the Transformer, most sequence transduction models such as those used for machine translation depended on recurrent neural networks (RNNs) or convolutional neural networks (CNNs). Both approaches came with significant limitations:
 
-- **Sequential Processing:** RNNs process tokens one at a time, preventing parallelization and making training slow
-- **Long-Range Dependencies:** RNNs struggle to learn dependencies between distant positions in sequences
-- **Computational Inefficiency:** The sequential nature creates memory constraints and limits batch processing
+- Sequential Processing (RNNs): RNNs read tokens one at a time which prevents processing in parallel and makes training slow.
+- Long Range Dependencies (RNNs): Even advanced variants like LSTMs and GRUs struggle to retain information from far earlier in the sequence.
+- Local Receptive Fields (CNNs): CNNs can process many tokens at once but they mainly capture short range patterns and require many layers to learn long distance relationships.
+- Computational Inefficiency: As sequences grow longer, both architectures become increasingly expensive. RNNs are slow because they must process each step sequentially and CNNs require deep stacks of layers to capture global context.
 
 ### The Approach
 
-The paper introduces the **Transformer**, a novel architecture that completely abandons recurrence and convolutions, relying entirely on **attention mechanisms**. The key innovation is the use of:
+The paper introduces the Transformer, an architecture that removes both recurrence and convolution and relies entirely on attention mechanisms. Its core innovation comes from three main ideas:
 
-1. **Self-Attention Mechanisms:** Allow the model to weigh the importance of different positions in the input sequence when encoding each position
-2. **Multi-Head Attention:** Enables the model to jointly attend to information from different representation subspaces
-3. **Positional Encoding:** Injects sequence order information without using recurrence
+1. Self Attention Mechanisms: Allow the model to look at all positions in the input at once and determine which tokens should influence each representation.
+2. Multi Head Attention: Lets the model attend to different types of relationships at the same time by projecting the input into multiple representation spaces.
+3. Positional Encoding: Provides information about the order of the sequence since the model does not process tokens sequentially.
 
 ### How the Problem Was Addressed
 
-The Transformer architecture addresses the limitations through:
+The Transformer overcomes the limitations of earlier models by rethinking how sequence data is processed. Instead of moving step by step like RNNs, it uses attention to look at the entire sequence at once. This leads to several major advantages:
 
-- **Parallelization:** All positions can be processed simultaneously, dramatically reducing training time
-- **Constant Path Length:** Dependencies between any two positions require only O(1) operations, compared to O(n) for RNNs
-- **Superior Performance:** Achieved state-of-the-art BLEU scores on machine translation tasks (28.4 on WMT 2014 English-to-German)
-- **Training Efficiency:** Trained in just 3.5 days on 8 GPUs, a fraction of the time required by previous models
+- Parallelization: The model can process all positions simultaneously, which makes training much faster than with recurrent networks.
+- Constant Path Length: Any two tokens can interact directly in a single layer, instead of requiring many steps as in RNNs.
+- Stronger Performance: The Transformer set new benchmarks on machine translation, including a 28.4 BLEU score on the WMT 2014 English to German task.
+- Efficient Training: The base model trained in just a few days on 8 GPUs, which was significantly faster than previous architectures.
 
-The model was validated on WMT 2014 English-to-German and English-to-French translation tasks, as well as English constituency parsing, demonstrating its generalizability.
+The authors also showed that the Transformer performs well beyond translation, validating it on English to French translation and English constituency parsing. Together, these results demonstrated that attention based models can generalize across a wide range of sequence tasks.
 
 ---
 
@@ -101,17 +102,17 @@ The Transformer follows an encoder-decoder structure but unlike older models, it
 ## How It Differs from Previous Models
 
 ### Compared to RNNs
-- **No sequential processing** - all positions computed in parallel
-- **Constant-time dependencies** - O(1) operations vs O(n) for any pair of positions
-- **No vanishing gradients** from long sequences
+- No sequential processing: The Transformer processes all positions at once instead of one token at a time, which allows full parallelization.
+- Constant time dependencies: Any two tokens can interact in a single step (O(1)) instead of needing to pass information through many RNN steps (O(n)).
+- No vanishing gradients: Because there is no recurrent chain, long sequences do not cause information to decay over tim
 
 ### Compared to CNNs
-- **Global receptive field** - each position can attend to all positions with O(1) operations
-- **No stacking required** - CNNs need O(log_k(n)) layers to connect distant positions
-- **More interpretable** - attention weights show what the model focuses on
+- Global receptive field: Every token can attend to every other token directly, without needing multiple convolution layers to expand the receptive field.
+- No deep stacking required: CNNs must stack many layers to model long range context, while a single attention layer already captures global relationships.
+- More interpretability: Attention weights reveal which tokens influence each other, offering clearer insight into what the model learns.
 
 ### Innovation
-The Transformer is the first sequence transduction model relying entirely on self-attention without using sequence-aligned RNNs or convolution.
+The Transformer introduced the first sequence transduction architecture built entirely on self attention, removing the need for sequence aligned RNNs or convolution and showing that attention alone can achieve state of the art performance.
 
 ---
 
@@ -145,11 +146,10 @@ This example shows how the model learns coreference resolution—understanding t
 
 These visualizations demonstrate that:
 
-- **Specialization:** Different attention heads learn to focus on different linguistic phenomena
-- **Interpretability:** The model learns interpretable patterns related to syntax and semantics without explicit supervision
-- **Linguistic Knowledge:** Attention provides insights into model behavior that were difficult to obtain with RNNs
-- **Emergent Behavior:** Complex linguistic understanding emerges from the simple attention mechanism
-
+- Specialization: Different attention heads learn to focus on different linguistic phenomena
+- Interpretability: The model learns interpretable patterns related to syntax and semantics without explicit supervision
+- Linguistic Knowledge: Attention provides insights into model behavior that were difficult to obtain with RNNs
+- 
 ---
 
 ## Question 2
@@ -171,37 +171,36 @@ When the outputs from all heads are combined, the model builds a richer understa
 
 ### Strengths
 
-1. **Groundbreaking Performance:** Achieved state-of-the-art results on WMT 2014 translation tasks, outperforming all previous models including ensembles
+1. **Computational Efficiency**
+Its ability to run fully in parallel reduced training time dramatically. For example, the base model trained in around 12 hours compared to the days or weeks typically required for RNN based systems.
 
-2. **Computational Efficiency:** Training time reduced dramatically (12 hours for base model vs. days or weeks for RNN models)
+2. **Effective Parallelization**
+Because the model processes all positions at once, it makes far better use of modern GPU hardware allowing larger batch sizes and more efficient training.
 
-3. **Parallelization:** The architecture enables much better GPU utilization through parallel processing
+3. **Improved Interpretability**
+Attention maps make it easier to understand what the model is focusing on. These visualizations reveal meaningful patterns like long distance dependencies and coreference relationships.
 
-4. **Interpretability:** Attention visualizations provide insights into what the model learns about language structure
-
-5. **Generalizability:** Successfully applied to English constituency parsing, demonstrating applicability beyond translation
+4. **Strong Generalizability**
+Beyond translation, the architecture performed well on tasks like English constituency parsing showing that the self attention approach extends beyond a single domain.
 
 ### Weaknesses and Limitations
 
-1. **Quadratic Complexity:** Self-attention has O(n²·d) complexity with respect to sequence length, making it less efficient for very long sequences (though the paper acknowledges this and suggests restricted attention as future work)
+1. **Quadratic Complexity**
+Self attention scales with the square of the sequence length which makes it expensive for very long inputs. The authors acknowledge this issue and briefly mention restricted attention as a potential direction, but they do not explore it in depth.
 
-2. **Positional Encoding Limitations:** The sinusoidal positional encoding is fixed and may not be optimal for all tasks (though experiments showed learned embeddings performed similarly)
+2. **Positional Encoding Constraints**
+The model relies on fixed sinusoidal positional encodings. While they work well in practice they may not be ideal for every task and the paper provides only limited comparison with learned positional embeddings.
 
-3. **Limited Analysis of Failure Cases:** The paper doesn't thoroughly explore where and why the model fails or performs poorly
+3. **Limited Discussion of Failure Cases**
+The paper focuses heavily on the model’s successes but offers little insight into situations where the Transformer struggles or performs inconsistently. Understanding these cases would have strengthened the analysis.
 
-4. **Hyperparameter Sensitivity:** While model variations are tested (Table 3), there's limited discussion of how sensitive the model is to hyperparameter choices and how to tune them for new tasks
+4. **Hyperparameter Sensitivity**
+Although the authors report several model variations, there is little guidance on how sensitive the architecture is to hyperparameter choices or how to tune it effectively for new applications.
 
-5. **Memory Requirements:** Despite being more efficient than RNNs, the model still requires significant GPU memory for the attention mechanism, especially with longer sequences
+5. **High Memory Usage**
+Even though the Transformer is more parallelizable than RNN based models, the attention mechanism still requires considerable GPU memory especially for long sequences. This can make training large models challenging without substantial hardware resources.
 
-### Questions for Further Development
-
-1. **Theoretical Understanding:** Why does scaled dot-product attention work so well? The paper provides intuition but limited theoretical justification
-
-2. **Optimal Architecture Depth:** The paper uses N=6 layers, but it's unclear if this is optimal or how to determine the right depth for different tasks
-
-3. **Attention Head Specialization:** While visualizations show heads learn different behaviors, could explicit task-based head design improve performance?
-
-### Disputed or Extended Findings
+### Extended Findings
 
 Since publication, subsequent research has:
 
@@ -232,13 +231,7 @@ The Transformer paper is one of the most influential papers in modern AI history
 - **Vision Transformers (ViT):** Applied to image classification, challenging CNNs
 - **Multimodal Models:** Combined vision and language (CLIP, DALL-E)
 - **Speech Recognition:** Replaced RNNs in ASR systems
-- **Protein Folding:** Used in AlphaFold2 for scientific breakthroughs
 - **Reinforcement Learning:** Decision Transformer for sequential decision-making
-
-#### 4. Research Community Impact
-- **One of the most cited AI papers** with over 100,000+ citations
-- Spawned entire research areas: efficient transformers, interpretability, scaling laws
-- Made attention mechanisms the default architectural choice
 
 ### Historical Context
 
