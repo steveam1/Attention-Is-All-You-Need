@@ -183,9 +183,9 @@ Beyond translation, the architecture performed well on English constituency pars
 
 ---
 
-## Weaknesses and Limitations
+### Weaknesses and Limitations
 
-### What Was Overlooked by the Authors?
+#### What Was Overlooked by the Authors?
 
 **Quadratic Complexity Without Practical Solutions**
 
@@ -199,9 +199,7 @@ The paper focuses almost entirely on successes but offers virtually no discussio
 
 The model uses fixed sinusoidal positional encodings with minimal justification. The paper briefly notes "nearly identical results" to learned embeddings in Table 3 but doesn't investigate why sinusoidal encodings are preferred, their limitations, or performance across different sequence lengths. Later research showed positional encoding design significantly impacts performance.
 
----
-
-### What Could Have Been Developed Further?
+#### What Could Have Been Developed Further?
 
 **Hyperparameter Sensitivity and Tuning Guidance**
 
@@ -215,9 +213,7 @@ While emphasizing speed, the paper doesn't thoroughly discuss memory usage. Atte
 
 The paper compares against state-of-the-art models but lacks detailed ablation studies isolating each component's contribution. What is the individual impact of multi-head attention versus residual connections versus layer normalization? This makes it harder to understand which innovations matter most.
 
----
-
-### Were There Any Errors or Disputed Findings?
+#### Were There Any Errors or Disputed Findings?
 
 **Limited Linguistic Diversity in Experiments**
 
@@ -231,9 +227,7 @@ The paper doesn't discuss training stability, convergence properties, or common 
 
 Although the paper includes compelling attention visualizations, it lacks systematic analysis of what functions different heads serve. Do certain heads consistently perform specific roles? How much redundancy exists? Can heads be pruned?
 
----
-
-### How Has Later Research Extended or Disputed the Findings?
+#### How Has Later Research Extended or Disputed the Findings?
 
 **Addressing the Limitations:**
 - **Reformer, Linformer, Longformer, and Performer** address quadratic complexity with linear attention mechanisms
@@ -252,7 +246,7 @@ The fundamental insight has proven completely correct, but the original implemen
 
 ---
 
-## How the Paper Holds Up on Inspection
+### How the Paper Holds Up on Inspection
 
 Despite these limitations, the Transformer paper holds up remarkably well. The core architectural insight was fundamentally correct and has stood the test of time. The weaknesses are primarily matters of scope and depth rather than fundamental flaws. The authors strategically focused on demonstrating the viability of pure attention-based models rather than exhaustively analyzing every aspect.
 
@@ -260,7 +254,7 @@ The paper's greatest strength was also a limitation: by proving that "attention 
 
 ---
 
-## Extended Findings
+### Extended Findings
 
 Since publication, subsequent research has:
 
@@ -341,6 +335,7 @@ The Transformer architecture solved fundamental problems that were limiting prog
 4. Enabled the current AI revolution in language understanding and generation
 
 The paper's title "Attention Is All You Need" has proven remarkably prescient—attention-based architectures have indeed become the foundation of modern AI systems.
+
 ---
 
 ## Resource Links
