@@ -30,10 +30,10 @@ The paper introduces the Transformer, an architecture that removes both recurren
 
 The Transformer overcomes the limitations of earlier models by rethinking how sequence data is processed. Instead of moving step by step like RNNs, it uses attention to look at the entire sequence at once. This leads to several major advantages:
 
-- Parallelization: The model can process all positions simultaneously, which makes training much faster than with recurrent networks.
+- Parallelization: The model can process all positions simultaneously which makes training much faster than with recurrent networks.
 - Constant Path Length: Any two tokens can interact directly in a single layer, instead of requiring many steps as in RNNs.
 - Stronger Performance: The Transformer achieved BLEU scores of **28.4** on English-to-German and **41.8** on English-to-French translation, beating all previous models including ensembles.
-- Efficient Training: The base model trained in just a few days on 8 GPUs, which was significantly faster than previous architectures.
+- Efficient Training: The base model trained in just a few days on 8 GPUs which was significantly faster than previous architectures.
 
 The authors also showed that the Transformer performs well beyond translation, validating it on English to French translation and English constituency parsing. Together, these results demonstrated that attention based models can generalize across a wide range of sequence tasks.
 
@@ -125,7 +125,7 @@ This example shows how the model learns coreference resolution—understanding t
 ## How It Differs from Previous Models
 
 ### Compared to RNNs
-- No sequential processing: The Transformer processes all positions at once instead of one token at a time, which allows full parallelization.
+- No sequential processing: The Transformer processes all positions at once instead of one token at a time which allows full parallelization.
 - Constant time dependencies: Any two tokens can interact in a single step (O(1)) instead of needing to pass information through many RNN steps (O(n)).
 - No vanishing gradients: Because there is no recurrent chain, long sequences do not cause information to decay over time.
 
@@ -211,7 +211,7 @@ The paper has some methodological limitations that affect the generalizability o
 
 - **Limited Linguistic Diversity in Experiments:** All experiments focus on European language pairs (English-German, English-French) and English parsing. The paper doesn't validate on morphologically rich languages, low-resource languages, or non-Indo-European families, limiting confidence in universal generalizability.
 
-- **Training Stability Not Addressed:** The paper doesn't discuss training stability, convergence properties, or common difficulties. Later practitioners discovered Transformers can be sensitive to learning rate scheduling and initialization, which the paper never mentions.
+- **Training Stability Not Addressed:** The paper doesn't discuss training stability, convergence properties, or common difficulties. Later practitioners discovered Transformers can be sensitive to learning rate scheduling and initialization which the paper never mentions.
 
 - **Systematic Analysis of Attention Heads Missing:** Although the paper includes compelling attention visualizations, it lacks systematic analysis of what functions different heads serve. Do certain heads consistently perform specific roles? How much redundancy exists? Can heads be pruned?
 
