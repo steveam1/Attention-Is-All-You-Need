@@ -189,7 +189,7 @@ Beyond translation, the architecture performed well on English constituency pars
 
 **Quadratic Complexity Without Practical Solutions**
 
-Self-attention scales with O(n²), making it expensive for very long inputs. While the authors acknowledge this and mention restricted attention, they don't explore practical solutions. This oversight is critical—long-context modeling has become one of modern NLP's biggest challenges, yet the paper provides no roadmap. The vanilla Transformer is impractical for full documents, long conversations, or genomic sequences.
+Self-attention scales with O(n²), making it expensive for very long inputs. While the authors acknowledge this and mention restricted attention, they don't explore practical solutions. This oversight is critical since long-context modeling has become one of modern NLP's biggest challenges, yet the paper provides no roadmap. The vanilla Transformer is impractical for full documents, long conversations, or genomic sequences.
 
 **Absence of Failure Mode Analysis**
 
