@@ -32,7 +32,7 @@ The Transformer overcomes the limitations of earlier models by rethinking how se
 
 - Parallelization: The model can process all positions simultaneously, which makes training much faster than with recurrent networks.
 - Constant Path Length: Any two tokens can interact directly in a single layer, instead of requiring many steps as in RNNs.
-- Stronger Performance: The Transformer set new benchmarks on machine translation, including a 28.4 BLEU score on the WMT 2014 English to German task.
+- Stronger Performance: The Transformer achieved BLEU scores of **28.4** on English-to-German and **41.8** on English-to-French translation, beating all previous models including ensembles.
 - Efficient Training: The base model trained in just a few days on 8 GPUs, which was significantly faster than previous architectures.
 
 The authors also showed that the Transformer performs well beyond translation, validating it on English to French translation and English constituency parsing. Together, these results demonstrated that attention based models can generalize across a wide range of sequence tasks.
