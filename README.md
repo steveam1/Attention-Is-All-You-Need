@@ -93,6 +93,15 @@ This example shows how the model learns coreference resolution—understanding t
 
 *Figure 5: Many attention heads exhibit behavior related to the structure of sentences. Two examples from layer 5 of 6 show how different heads learn to perform different structural tasks. The heads clearly learned different syntactic functions, such as attending to subjects, verbs, or dependent clauses.*
 
+### What These Visualizations Reveal
+
+These attention patterns demonstrate several important insights:
+
+- **Specialization:** Different attention heads learn to focus on different linguistic phenomena (syntax, semantics, discourse)
+- **Interpretability:** The model learns interpretable patterns related to syntax and semantics without explicit supervision
+- **Linguistic Knowledge:** Attention provides insights into model behavior that were difficult to obtain with RNNs
+- **Emergent Behavior:** Complex linguistic understanding emerges from the simple attention mechanism
+
 ---
 
 ## Pseudocode Description
@@ -137,17 +146,6 @@ This example shows how the model learns coreference resolution—understanding t
 ### Innovation
 The Transformer introduced the first sequence transduction architecture built entirely on self attention, removing the need for sequence aligned RNNs or convolution and showing that attention alone can achieve state of the art performance.
 
----
-
-
-### Key Insights
-
-These visualizations demonstrate that:
-
-- Specialization: Different attention heads learn to focus on different linguistic phenomena
-- Interpretability: The model learns interpretable patterns related to syntax and semantics without explicit supervision
-- Linguistic Knowledge: Attention provides insights into model behavior that were difficult to obtain with RNNs
-  
 ---
 
 ## Question 2
