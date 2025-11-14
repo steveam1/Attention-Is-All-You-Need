@@ -239,7 +239,7 @@ The fundamental insight has proven completely correct, but the original implemen
 
 Despite these limitations, the Transformer paper holds up remarkably well. The core architectural insight was fundamentally correct and has stood the test of time. The weaknesses are primarily matters of scope and depth rather than fundamental flaws. The authors strategically focused on demonstrating the viability of pure attention-based models rather than exhaustively analyzing every aspect.
 
-The paper's greatest strength was also a limitation: by proving that "attention is all you need," the authors opened a new paradigm but left many practical questions for future work. The explosion of Transformer variants since 2017 validates both the power of the core idea and the need for continued refinement. The paper launched a research program rather than providing a final solution—which may have been exactly what the field needed.
+The paper's greatest strength was also a limitation: by proving that "attention is all you need," the authors opened a new paradigm but left many practical questions for future work. The explosion of Transformer variants since 2017 validates both the power of the core idea and the need for continued refinement. The paper launched a research program rather than providing a final solution which may have been exactly what the field needed.
 
 ---
 
