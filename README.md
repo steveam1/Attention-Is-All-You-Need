@@ -185,63 +185,52 @@ Beyond translation, the architecture performed well on English constituency pars
 
 ### Weaknesses and Limitations
 
-#### What Was Overlooked by the Authors?
+**What Was Overlooked by the Authors?**
 
-**Quadratic Complexity Without Practical Solutions**
+The paper has several notable gaps in its analysis and exploration:
 
-Self-attention scales with O(n²), making it expensive for very long inputs. While the authors acknowledge this and mention restricted attention, they don't explore practical solutions. This oversight is critical since long-context modeling has become one of modern NLP's biggest challenges, yet the paper provides no roadmap. The vanilla Transformer is impractical for full documents, long conversations, or genomic sequences.
+- **Quadratic Complexity Without Practical Solutions:** Self-attention scales with O(n²), making it expensive for very long inputs. While the authors acknowledge this and mention restricted attention, they don't explore practical solutions. This oversight is critical—long-context modeling has become one of modern NLP's biggest challenges, yet the paper provides no roadmap. The vanilla Transformer is impractical for full documents, long conversations, or genomic sequences.
 
-**Absence of Failure Mode Analysis**
+- **Absence of Failure Mode Analysis:** The paper focuses almost entirely on successes but offers virtually no discussion of when or why the Transformer struggles. What linguistic phenomena does it handle poorly? Does performance degrade on certain sentence structures? Understanding failure cases would have provided valuable insights and made the evaluation more credible.
 
-The paper focuses almost entirely on successes but offers virtually no discussion of when or why the Transformer struggles. What linguistic phenomena does it handle poorly? Does performance degrade on certain sentence structures? Understanding failure cases would have provided valuable insights and made the evaluation more credible.
+- **Limited Exploration of Positional Encoding:** The model uses fixed sinusoidal positional encodings with minimal justification. The paper briefly notes "nearly identical results" to learned embeddings in Table 3 but doesn't investigate why sinusoidal encodings are preferred, their limitations, or performance across different sequence lengths. Later research showed positional encoding design significantly impacts performance.
 
-**Limited Exploration of Positional Encoding**
+**What Could Have Been Developed Further?**
 
-The model uses fixed sinusoidal positional encodings with minimal justification. The paper briefly notes "nearly identical results" to learned embeddings in Table 3 but doesn't investigate why sinusoidal encodings are preferred, their limitations, or performance across different sequence lengths. Later research showed positional encoding design significantly impacts performance.
+Several aspects of the work deserved deeper investigation:
 
-#### What Could Have Been Developed Further?
+- **Hyperparameter Sensitivity and Tuning Guidance:** The Transformer has numerous hyperparameters (layers, heads, dimensions, dropout), but the paper provides little guidance on sensitivity or tuning for new applications. Table 3 shows variations but lacks principles for architecture design. Later work revealed Transformers can be highly sensitive to configurations.
 
-**Hyperparameter Sensitivity and Tuning Guidance**
+- **Memory Requirements and Resource Constraints:** While emphasizing speed, the paper doesn't thoroughly discuss memory usage. Attention matrices scale quadratically with sequence length, creating substantial GPU memory demands that can limit batch sizes or make training infeasible without significant hardware.
 
-The Transformer has numerous hyperparameters (layers, heads, dimensions, dropout), but the paper provides little guidance on sensitivity or tuning for new applications. Table 3 shows variations but lacks principles for architecture design. Later work revealed Transformers can be highly sensitive to configurations.
+- **Incomplete Ablation Studies:** The paper compares against state-of-the-art models but lacks detailed ablation studies isolating each component's contribution. What is the individual impact of multi-head attention versus residual connections versus layer normalization? This makes it harder to understand which innovations matter most.
 
-**Memory Requirements and Resource Constraints**
+**Were There Any Errors or Disputed Findings?**
 
-While emphasizing speed, the paper doesn't thoroughly discuss memory usage. Attention matrices scale quadratically with sequence length, creating substantial GPU memory demands that can limit batch sizes or make training infeasible without significant hardware.
+The paper has some methodological limitations that affect the generalizability of its claims:
 
-**Incomplete Ablation Studies**
+- **Limited Linguistic Diversity in Experiments:** All experiments focus on European language pairs (English-German, English-French) and English parsing. The paper doesn't validate on morphologically rich languages, low-resource languages, or non-Indo-European families, limiting confidence in universal generalizability.
 
-The paper compares against state-of-the-art models but lacks detailed ablation studies isolating each component's contribution. What is the individual impact of multi-head attention versus residual connections versus layer normalization? This makes it harder to understand which innovations matter most.
+- **Training Stability Not Addressed:** The paper doesn't discuss training stability, convergence properties, or common difficulties. Later practitioners discovered Transformers can be sensitive to learning rate scheduling and initialization, which the paper never mentions.
 
-#### Were There Any Errors or Disputed Findings?
+- **Systematic Analysis of Attention Heads Missing:** Although the paper includes compelling attention visualizations, it lacks systematic analysis of what functions different heads serve. Do certain heads consistently perform specific roles? How much redundancy exists? Can heads be pruned?
 
-**Limited Linguistic Diversity in Experiments**
+**How Has Later Research Extended or Disputed the Findings?**
 
-All experiments focus on European language pairs (English-German, English-French) and English parsing. The paper doesn't validate on morphologically rich languages, low-resource languages, or non-Indo-European families, limiting confidence in universal generalizability.
+Subsequent work has both validated the core insights and addressed the limitations:
 
-**Training Stability Not Addressed**
-
-The paper doesn't discuss training stability, convergence properties, or common difficulties. Later practitioners discovered Transformers can be sensitive to learning rate scheduling and initialization, which the paper never mentions.
-
-**Systematic Analysis of Attention Heads Missing**
-
-Although the paper includes compelling attention visualizations, it lacks systematic analysis of what functions different heads serve. Do certain heads consistently perform specific roles? How much redundancy exists? Can heads be pruned?
-
-#### How Has Later Research Extended or Disputed the Findings?
-
-**Addressing the Limitations:**
+*Addressing the Limitations:*
 - **Reformer, Linformer, Longformer, and Performer** address quadratic complexity with linear attention mechanisms
 - Research on **learned positional encodings, relative positional encodings (T5), and RoPE** showed sinusoidal encodings aren't universally optimal
 - **Sparse attention patterns** reduce both computational and memory costs
 - **Scaling laws research** (Kaplan et al., 2020) provided the hyperparameter guidance the original paper lacked
 
-**Validating and Extending:**
+*Validating and Extending:*
 - The core insight that attention alone is sufficient has been **thoroughly validated** across virtually every domain
 - Analysis of attention head functions revealed **significant redundancy**, leading to pruning techniques
 - Every major implementation today includes modifications: Pre-LN normalization, GeLU/SwiGLU activations, efficient attention variants
 
-**Critical Reassessment:**
-
+*Critical Reassessment:*  
 The fundamental insight has proven completely correct, but the original implementation required substantial refinement for modern scale. The paper succeeded brilliantly in proving the viability of attention-based models but underestimated practical challenges that emerge at scale.
 
 ---
@@ -333,8 +322,6 @@ The Transformer architecture solved fundamental problems that were limiting prog
 2. Provided an architecture that scales predictably with more data and compute
 3. Created a unified framework applicable across modalities (text, vision, speech)
 4. Enabled the current AI revolution in language understanding and generation
-
-The paper's title "Attention Is All You Need" has proven remarkably prescient—attention-based architectures have indeed become the foundation of modern AI systems.
 
 ---
 
