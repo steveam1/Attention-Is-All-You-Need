@@ -143,9 +143,6 @@ These attention patterns demonstrate several important insights:
 - No deep stacking required: CNNs must stack many layers to model long range context, while a single attention layer already captures global relationships.
 - More interpretability: Attention weights reveal which tokens influence each other, offering clearer insight into what the model learns.
 
-### Innovation
-The Transformer introduced the first sequence transduction architecture built entirely on self attention, removing the need for sequence aligned RNNs or convolution and showing that attention alone can achieve state of the art performance.
-
 ---
 
 ## Question 2
