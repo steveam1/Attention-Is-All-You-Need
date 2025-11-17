@@ -180,7 +180,7 @@ Performed well beyond translation (e.g., English constituency parsing), showing 
 
 ### Weaknesses and Limitations
 
-#### What Was Overlooked
+*What Was Overlooked:*
 
 **Quadratic Complexity (O(n²))**  
 Self-attention becomes expensive for long sequences (10,000+ tokens). The paper acknowledges this but offers no solutions. This makes vanilla Transformers impractical for full documents or long conversations.
@@ -191,7 +191,7 @@ Paper shows only successes—no discussion of when/why the model fails (e.g., co
 **Limited Positional Encoding Exploration**  
 Uses sinusoidal encodings with minimal justification. Just one line: "nearly identical to learned embeddings."
 
-#### What Needed Further Development
+*What Needed Further Development:*
 
 **Hyperparameter Guidance**  
 Little advice on tuning layers, heads, dimensions, dropout, or learning rates. Practitioners had to discover optimal configurations through trial and error.
@@ -202,7 +202,7 @@ Paper emphasizes speed but ignores memory—attention matrices scale quadratical
 **Incomplete Ablations**  
 No isolation of component contributions (multi-head attention vs. residuals vs. layer norm). Makes it hard to understand which innovations matter most.
 
-#### Methodological Limitations
+*Methodological Limitations:*
 
 **Limited Language Diversity**  
 Only European languages tested (English-German, English-French). Unclear if approach works for morphologically rich languages (Turkish, Finnish) or non-Indo-European families (Chinese, Japanese).
