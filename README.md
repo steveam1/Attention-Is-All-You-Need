@@ -219,44 +219,26 @@ Shows compelling visualizations but doesn't analyze head specialization, redunda
 
 **Addressing Limitations:**
 
-*Efficiency:*
-- **Reformer** (2020): Locality-sensitive hashing → O(n log n) complexity
-- **Linformer** (2020): Low-rank projections → O(n) complexity  
-- **Longformer** (2020): Local + global attention → O(n) complexity
-- **Performer** (2021): Kernel approximations → linear complexity
-- **FlashAttention** (2022): GPU-optimized computation
-
-*Positional Encoding:*
-- **RoPE** (2021): Rotary embeddings with better long-sequence performance
-- **ALiBi** (2022): Distance-based biases enabling length extrapolation
-- **T5**: Relative positional encodings vs. absolute positions
-
-*Training Stability:*
-- **Pre-LN normalization**: Better gradient flow than Post-LN
-- **GeLU/SwiGLU activations**: Improved over ReLU
-- **Learning rate warmup**: Essential for stable convergence
-- **Better initialization**: Prevents early training divergence
-
-*Hyperparameter Guidance:*
-- **Scaling laws** (Kaplan et al., 2020): Predictable performance curves with model size, data, and compute
+Later work fixed the paper's key gaps:
+- **Efficiency:** Reformer, Linformer, Longformer, and FlashAttention reduced complexity from O(n²) to O(n)
+- **Positional Encoding:** RoPE, ALiBi, and T5's relative encodings improved long-sequence performance
+- **Training Stability:** Pre-LN normalization, GeLU/SwiGLU activations, and learning rate warmup prevented divergence
+- **Hyperparameter Guidance:** Scaling laws (Kaplan et al., 2020) provided predictable performance curves
 
 **Validating & Extending:**
 
 The core insight—attention alone is sufficient—has been validated across every domain:
-- **NLP**: BERT, GPT series, T5, LLaMA
-- **Vision**: ViT challenges CNNs in image classification
-- **Multimodal**: CLIP, DALL-E, Flamingo combine vision + language  
-- **Speech**: Whisper, modern ASR systems
-- **Biology**: AlphaFold2 protein structure prediction
-- **RL**: Decision Transformer for sequential decisions
+- **NLP:** BERT, GPT series, T5, LLaMA
+- **Vision:** ViT challenges CNNs
+- **Multimodal:** CLIP, DALL-E, Flamingo
+- **Speech:** Whisper, modern ASR
+- **Biology:** AlphaFold2
+- **RL:** Decision Transformer
 
 **Attention Head Analysis:**
-- Found **40-50% redundancy**—many heads prunable without major performance loss
-- Heads **specialize by function**: some handle syntax, others semantics
-- **Task-dependent importance**: different tasks rely on different heads
-
-**Critical Reassessment:**  
-Fundamental insight proven correct—attention-based architectures became the foundation of modern AI. However, original implementation needed substantial refinement for modern scale. The paper launched a research program rather than providing a final solution, which may have been exactly what the field needed.
+- 40-50% of heads are redundant and can be pruned
+- Heads specialize by function (syntax vs. semantics)
+- Importance varies by task
 
 ---
 
