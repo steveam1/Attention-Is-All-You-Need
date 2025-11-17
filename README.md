@@ -303,5 +303,4 @@ The Transformer solved fundamental AI problems:
 Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). 
 Attention Is All You Need. Advances in Neural Information Processing Systems (NeurIPS 2017). 
 https://arxiv.org/abs/1706.03762
-```
----
+
