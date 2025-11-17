@@ -13,27 +13,27 @@
 
 Before the Transformer, most sequence transduction models such as those used for machine translation depended on recurrent neural networks (RNNs) or convolutional neural networks (CNNs). Both approaches came with significant limitations:
 
-- Sequential Processing (RNNs): RNNs read tokens one at a time which prevents processing in parallel and makes training slow.
-- Long Range Dependencies (RNNs): Even advanced variants like LSTMs and GRUs struggle to retain information from far earlier in the sequence.
-- Local Receptive Fields (CNNs): CNNs can process many tokens at once but they mainly capture short range patterns and require many layers to learn long distance relationships.
-- Computational Inefficiency: As sequences grow longer, both architectures become increasingly expensive. RNNs are slow because they must process each step sequentially and CNNs require deep stacks of layers to capture global context.
+- **Sequential Processing** (RNNs): RNNs read tokens one at a time which prevents processing in parallel and makes training slow.
+- **Long Range Dependencies** (RNNs): Even advanced variants like LSTMs and GRUs struggle to retain information from far earlier in the sequence.
+- **Local Receptive Fields** (CNNs): CNNs can process many tokens at once but they mainly capture short range patterns and require many layers to learn long distance relationships.
+- **Computational Inefficiency**: As sequences grow longer, both architectures become increasingly expensive. RNNs are slow because they must process each step sequentially and CNNs require deep stacks of layers to capture global context.
 
 ### The Approach
 
 The paper introduces the Transformer, an architecture that removes both recurrence and convolution and relies entirely on attention mechanisms. Its core innovation comes from three main ideas:
 
-1. Self Attention Mechanisms: Allow the model to look at all positions in the input at once and determine which tokens should influence each representation.
-2. Multi Head Attention: Lets the model attend to different types of relationships at the same time by projecting the input into multiple representation spaces.
-3. Positional Encoding: Provides information about the order of the sequence since the model does not process tokens sequentially.
+1. **Self Attention Mechanisms**: Allow the model to look at all positions in the input at once and determine which tokens should influence each representation.
+2. **Multi Head Attention**: Lets the model attend to different types of relationships at the same time by projecting the input into multiple representation spaces.
+3. **Positional Encoding**: Provides information about the order of the sequence since the model does not process tokens sequentially.
 
 ### How the Problem Was Addressed
 
 The Transformer overcomes the limitations of earlier models by rethinking how sequence data is processed. Instead of moving step by step like RNNs, it uses attention to look at the entire sequence at once. This leads to several major advantages:
 
-- Parallelization: The model can process all positions simultaneously which makes training much faster than with recurrent networks.
-- Constant Path Length: Any two tokens can interact directly in a single layer, instead of requiring many steps as in RNNs.
-- Stronger Performance: The Transformer achieved BLEU scores of 28.4 on English-to-German and 41.8 on English-to-French translation, beating all previous models including ensembles.
-- Efficient Training: The base model trained in just a few days on 8 GPUs which was significantly faster than previous architectures.
+- **Parallelization**: The model can process all positions simultaneously which makes training much faster than with recurrent networks.
+- **Constant Path Length**: Any two tokens can interact directly in a single layer, instead of requiring many steps as in RNNs.
+- **Stronger Performance**: The Transformer achieved BLEU scores of 28.4 on English-to-German and 41.8 on English-to-French translation, beating all previous models including ensembles.
+- **Efficient Training**: The base model trained in just a few days on 8 GPUs which was significantly faster than previous architectures.
 
 The authors also showed that the Transformer performs well beyond translation, validating it on English to French translation and English constituency parsing. Together, these results demonstrated that attention based models can generalize across a wide range of sequence tasks.
 
