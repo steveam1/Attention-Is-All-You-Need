@@ -279,7 +279,7 @@ Fundamental insight proven correct—attention-based architectures became the fo
 - **Biology:** AlphaFold2 protein structure prediction
 - **RL:** Decision Transformer for sequential decisions
 
-### 4. Historical Context
+### Historical Context
 
 **Before (Pre-2017):**
 - LSTMs/GRUs dominated sequences
@@ -293,7 +293,7 @@ Fundamental insight proven correct—attention-based architectures became the fo
 - Billion-parameter models feasible
 - Single models beat previous ensembles
 
-### 5. Why It Matters
+### Why It Matters
 
 The Transformer solved fundamental AI problems:
 
@@ -301,7 +301,6 @@ The Transformer solved fundamental AI problems:
 2. **Predictable scaling** with more data and compute
 3. **Unified architecture** works across modalities (text, vision, speech)
 
-This launched the modern AI revolution—the foundation for every major AI system today.
 ---
 
 ## Resource Links
